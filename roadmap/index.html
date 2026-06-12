@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placement Roadmap | CampusFlow AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07112B;
+    --bg-2:#0B1838;
+    --violet:#A855F7;
+    --violet-2:#7C3AED;
+    --pink:#EC4899;
+    --blue:#3B82F6;
+    --text:#E6EAF5;
+    --muted:#94A3C4;
+    --glass:rgba(255,255,255,0.04);
+    --glass-border:rgba(255,255,255,0.08);
+    --radius:20px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+    line-height:1.6;
+  }
+
+  /* Background ambient glows */
+  .bg-glow{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(168,85,247,0.18), transparent 35%),
+      radial-gradient(circle at 85% 25%, rgba(124,58,237,0.15), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(168,85,247,0.12), transparent 40%);
+    pointer-events:none;
+  }
+
+  .container{
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ===== NAVBAR ===== */
+  nav{
+    position:sticky;
+    top:0;
+    z-index:100;
+    backdrop-filter:blur(16px);
+    background:rgba(7,17,43,0.7);
+    border-bottom:1px solid var(--glass-border);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 24px;
+    max-width:1280px;
+    margin:0 auto;
+  }
+  .logo{
+    font-weight:800;
+    font-size:1.3rem;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo-mark{
+    width:34px;height:34px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--violet),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    font-size:1rem;
+    box-shadow:0 0 20px rgba(168,85,247,0.5);
+  }
+  .nav-links{
+    display:flex;
+    gap:32px;
+    list-style:none;
+    align-items:center;
+  }
+  .nav-links a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:0.92rem;
+    font-weight:500;
+    transition:color .2s;
+  }
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    background:linear-gradient(135deg,var(--violet),var(--violet-2));
+    padding:10px 22px;
+    border-radius:10px;
+    color:#fff;
+    font-weight:600;
+    font-size:0.9rem;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 4px 20px rgba(168,85,247,0.35);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(168,85,247,0.5);}
+  .hamburger{display:none;font-size:1.6rem;background:none;border:none;color:var(--text);cursor:pointer;}
+
+  /* ===== GENERIC ===== */
+  section{padding:90px 0;position:relative;}
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 16px;
+    border-radius:999px;
+    background:rgba(168,85,247,0.1);
+    border:1px solid rgba(168,85,247,0.3);
+    color:var(--violet);
+    font-size:0.8rem;
+    font-weight:600;
+    letter-spacing:0.5px;
+    margin-bottom:20px;
+  }
+  .section-title{
+    font-size:clamp(1.8rem,3.5vw,2.6rem);
+    font-weight:800;
+    margin-bottom:14px;
+    letter-spacing:-0.5px;
+  }
+  .section-sub{
+    color:var(--muted);
+    font-size:1.05rem;
+    max-width:600px;
+    margin-bottom:50px;
+  }
+  .gradient-text{
+    background:linear-gradient(135deg,#fff 30%,var(--violet) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  /* ===== GLASS CARD ===== */
+  .glass{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:var(--radius);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    position:relative;
+    overflow:hidden;
+  }
+  .glass::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    padding-top:80px;
+    padding-bottom:60px;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:60px;
+    align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem,5vw,3.8rem);
+    font-weight:900;
+    line-height:1.15;
+    letter-spacing:-1.5px;
+    margin-bottom:22px;
+  }
+  .hero p.lead{
+    color:var(--muted);
+    font-size:1.15rem;
+    max-width:520px;
+    margin-bottom:36px;
+  }
+  .hero-btns{display:flex;gap:16px;flex-wrap:wrap;}
+  .btn{
+    padding:15px 30px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:0.98rem;
+    cursor:pointer;
+    border:none;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:all .25s ease;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--violet),var(--violet-2));
+    color:#fff;
+    box-shadow:0 8px 30px rgba(168,85,247,0.4);
+  }
+  .btn-primary:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 36px rgba(168,85,247,0.55);
+  }
+  .btn-outline{
+    background:rgba(255,255,255,0.04);
+    color:var(--text);
+    border:1px solid var(--glass-border);
+  }
+  .btn-outline:hover{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(168,85,247,0.4);
+    transform:translateY(-3px);
+  }
+
+  /* Hero illustration */
+  .hero-illustration{
+    position:relative;
+    height:460px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .roadmap-orb{
+    position:absolute;
+    width:340px;height:340px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(168,85,247,0.35),transparent 70%);
+    filter:blur(20px);
+    animation:pulse 6s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);opacity:0.7;}
+    50%{transform:scale(1.15);opacity:1;}
+  }
+  .illustration-card{
+    position:absolute;
+    padding:18px 22px;
+    border-radius:16px;
+    min-width:200px;
+    animation:float 5s ease-in-out infinite;
+  }
+  .illustration-card .ic-icon{
+    width:38px;height:38px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.1rem;
+    margin-bottom:10px;
+  }
+  .illustration-card .ic-title{font-weight:700;font-size:0.95rem;}
+  .illustration-card .ic-sub{font-size:0.78rem;color:var(--muted);margin-top:2px;}
+  .card-1{top:10%;left:0;animation-delay:0s;}
+  .card-1 .ic-icon{background:linear-gradient(135deg,var(--violet),var(--violet-2));}
+  .card-2{top:42%;right:0;animation-delay:1.2s;}
+  .card-2 .ic-icon{background:linear-gradient(135deg,#3B82F6,#06B6D4);}
+  .card-3{bottom:6%;left:8%;animation-delay:2.4s;}
+  .card-3 .ic-icon{background:linear-gradient(135deg,#EC4899,#F97316);}
+  @keyframes float{
+    0%,100%{transform:translateY(0px);}
+    50%{transform:translateY(-16px);}
+  }
+  .center-node{
+    width:130px;height:130px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--violet),var(--violet-2));
+    display:flex;align-items:center;justify-content:center;
+    font-size:2.6rem;
+    box-shadow:0 0 60px rgba(168,85,247,0.6);
+    z-index:2;
+    animation:spin-glow 8s linear infinite;
+  }
+  @keyframes spin-glow{
+    0%{box-shadow:0 0 50px rgba(168,85,247,0.5);}
+    50%{box-shadow:0 0 90px rgba(168,85,247,0.8);}
+    100%{box-shadow:0 0 50px rgba(168,85,247,0.5);}
+  }
+
+  /* ===== DASHBOARD ===== */
+  .dash-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+  }
+  .stat-card{
+    padding:30px;
+    transition:transform .3s, border-color .3s;
+  }
+  .stat-card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(168,85,247,0.4);
+  }
+  .stat-icon{
+    width:46px;height:46px;
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.3rem;
+    margin-bottom:20px;
+    background:linear-gradient(135deg,rgba(168,85,247,0.25),rgba(124,58,237,0.1));
+    border:1px solid rgba(168,85,247,0.3);
+  }
+  .stat-value{
+    font-size:2.2rem;
+    font-weight:800;
+    margin-bottom:6px;
+    letter-spacing:-1px;
+  }
+  .stat-label{color:var(--muted);font-size:0.92rem;}
+  .progress-ring-wrap{position:relative;width:46px;height:46px;}
+
+  /* ===== CAREER GOAL CARDS ===== */
+  .role-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:20px;
+  }
+  .role-card{
+    padding:28px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .3s ease;
+    position:relative;
+  }
+  .role-card .role-emoji{
+    font-size:2.4rem;
+    margin-bottom:14px;
+    display:block;
+  }
+  .role-card .role-name{font-weight:700;font-size:0.98rem;margin-bottom:4px;}
+  .role-card .role-tag{font-size:0.78rem;color:var(--muted);}
+  .role-card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(168,85,247,0.35);
+  }
+  .role-card.active{
+    border-color:var(--violet);
+    background:linear-gradient(180deg,rgba(168,85,247,0.16),rgba(168,85,247,0.04));
+    box-shadow:0 0 40px rgba(168,85,247,0.3);
+  }
+  .role-card.active::after{
+    content:'✓ Selected';
+    position:absolute;
+    top:12px;right:12px;
+    font-size:0.7rem;
+    font-weight:700;
+    color:var(--violet);
+    background:rgba(168,85,247,0.15);
+    padding:3px 10px;
+    border-radius:999px;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline{
+    position:relative;
+    max-width:900px;
+    margin:0 auto;
+  }
+  .timeline::before{
+    content:'';
+    position:absolute;
+    left:28px;
+    top:0;bottom:0;
+    width:2px;
+    background:linear-gradient(180deg,var(--violet) 0%,rgba(168,85,247,0.1) 100%);
+  }
+  .phase{
+    position:relative;
+    padding-left:80px;
+    margin-bottom:46px;
+  }
+  .phase:last-child{margin-bottom:0;}
+  .phase-dot{
+    position:absolute;
+    left:14px;top:4px;
+    width:30px;height:30px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--violet),var(--violet-2));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;
+    font-size:0.85rem;
+    box-shadow:0 0 0 6px rgba(7,17,43,1), 0 0 25px rgba(168,85,247,0.6);
+    z-index:1;
+  }
+  .phase-card{
+    padding:28px 30px;
+    transition:transform .3s, border-color .3s;
+  }
+  .phase-card:hover{
+    transform:translateX(6px);
+    border-color:rgba(168,85,247,0.35);
+  }
+  .phase-card h3{
+    font-size:1.25rem;
+    font-weight:800;
+    margin-bottom:6px;
+  }
+  .phase-card .phase-meta{
+    color:var(--violet);
+    font-size:0.8rem;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .phase-items{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .phase-chip{
+    padding:8px 16px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-border);
+    font-size:0.85rem;
+    color:var(--text);
+    transition:all .2s;
+  }
+  .phase-chip:hover{
+    background:rgba(168,85,247,0.12);
+    border-color:rgba(168,85,247,0.4);
+    color:#fff;
+  }
+
+  /* ===== SKILL TRACKER ===== */
+  .skills-card{padding:40px;}
+  .skill-row{margin-bottom:26px;}
+  .skill-row:last-child{margin-bottom:0;}
+  .skill-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-weight:600;
+    font-size:0.95rem;
+  }
+  .skill-top span.pct{color:var(--violet);font-weight:700;}
+  .skill-bar{
+    width:100%;
+    height:10px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.06);
+    overflow:hidden;
+  }
+  .skill-fill{
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--violet),var(--blue));
+    width:0%;
+    transition:width 1.4s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 0 12px rgba(168,85,247,0.6);
+  }
+
+  /* ===== PROJECTS ===== */
+  .projects-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+  }
+  .project-card{
+    padding:28px;
+    transition:all .3s ease;
+    cursor:pointer;
+  }
+  .project-card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(168,85,247,0.4);
+    box-shadow:0 16px 50px rgba(168,85,247,0.15);
+  }
+  .project-icon{
+    width:50px;height:50px;
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.4rem;
+    margin-bottom:18px;
+    background:linear-gradient(135deg,rgba(168,85,247,0.25),rgba(59,130,246,0.15));
+    border:1px solid rgba(168,85,247,0.3);
+  }
+  .project-card h4{font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+  .project-card p{color:var(--muted);font-size:0.9rem;margin-bottom:16px;}
+  .project-level{
+    display:inline-block;
+    font-size:0.75rem;
+    font-weight:700;
+    padding:4px 12px;
+    border-radius:999px;
+    background:rgba(168,85,247,0.12);
+    color:var(--violet);
+    border:1px solid rgba(168,85,247,0.25);
+  }
+
+  /* ===== AI MENTOR ===== */
+  .ai-card{
+    padding:46px;
+    position:relative;
+    background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(59,130,246,0.06));
+    border:1px solid rgba(168,85,247,0.3);
+    overflow:hidden;
+  }
+  .ai-card::after{
+    content:'';
+    position:absolute;
+    width:300px;height:300px;
+    background:radial-gradient(circle,rgba(168,85,247,0.3),transparent 70%);
+    top:-100px;right:-100px;
+    border-radius:50%;
+    filter:blur(10px);
+  }
+  .ai-header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:28px;
+    position:relative;
+    z-index:1;
+  }
+  .ai-avatar{
+    width:50px;height:50px;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--violet),var(--blue));
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.4rem;
+    box-shadow:0 0 30px rgba(168,85,247,0.5);
+  }
+  .ai-header h3{font-size:1.3rem;font-weight:800;}
+  .ai-header p{color:var(--muted);font-size:0.88rem;}
+  .ai-list{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    position:relative;
+    z-index:1;
+  }
+  .ai-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:18px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-border);
+    transition:all .25s;
+  }
+  .ai-item:hover{
+    background:rgba(168,85,247,0.1);
+    border-color:rgba(168,85,247,0.4);
+    transform:translateX(4px);
+  }
+  .ai-check{
+    width:24px;height:24px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--violet),var(--violet-2));
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.8rem;
+    font-weight:800;
+    color:#fff;
+  }
+  .ai-item p{font-size:0.92rem;font-weight:600;}
+
+  /* ===== STATS ===== */
+  .stats-strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+    text-align:center;
+  }
+  .stats-strip .stat-big{
+    padding:36px 20px;
+    transition:transform .3s;
+  }
+  .stats-strip .stat-big:hover{transform:translateY(-6px);}
+  .stats-strip .num{
+    font-size:2.6rem;
+    font-weight:900;
+    background:linear-gradient(135deg,#fff,var(--violet));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    letter-spacing:-1px;
+    margin-bottom:8px;
+  }
+  .stats-strip .lbl{color:var(--muted);font-size:0.9rem;font-weight:500;}
+
+  /* ===== CTA ===== */
+  .cta-section{
+    text-align:center;
+    padding:100px 0;
+  }
+  .cta-box{
+    padding:70px 40px;
+    background:linear-gradient(135deg,rgba(168,85,247,0.18),rgba(59,130,246,0.08));
+    border:1px solid rgba(168,85,247,0.3);
+    position:relative;
+    overflow:hidden;
+  }
+  .cta-box::before{
+    content:'';
+    position:absolute;
+    width:500px;height:500px;
+    background:radial-gradient(circle,rgba(168,85,247,0.25),transparent 70%);
+    top:-200px;left:50%;
+    transform:translateX(-50%);
+    border-radius:50%;
+    filter:blur(30px);
+  }
+  .cta-box h2{
+    font-size:clamp(1.8rem,4vw,2.8rem);
+    font-weight:900;
+    margin-bottom:18px;
+    position:relative;
+    z-index:1;
+  }
+  .cta-box p{
+    color:var(--muted);
+    margin-bottom:34px;
+    position:relative;
+    z-index:1;
+    font-size:1.05rem;
+  }
+  .cta-btns{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+    position:relative;
+    z-index:1;
+  }
+
+  /* ===== FOOTER ===== */
+  footer{
+    border-top:1px solid var(--glass-border);
+    padding:60px 0 30px;
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:40px;
+    margin-bottom:40px;
+  }
+  .footer-brand p{
+    color:var(--muted);
+    font-size:0.9rem;
+    margin-top:14px;
+    max-width:300px;
+  }
+  .footer-col h4{
+    font-size:0.95rem;
+    font-weight:700;
+    margin-bottom:18px;
+  }
+  .footer-col ul{list-style:none;}
+  .footer-col li{margin-bottom:12px;}
+  .footer-col a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:0.88rem;
+    transition:color .2s;
+  }
+  .footer-col a:hover{color:var(--violet);}
+  .footer-bottom{
+    border-top:1px solid var(--glass-border);
+    padding-top:24px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    color:var(--muted);
+    font-size:0.85rem;
+  }
+
+  /* ===== ANIMATIONS ON SCROLL ===== */
+  .fade-up{
+    opacity:0;
+    transform:translateY(30px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .fade-up.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:1024px){
+    .dash-grid{grid-template-columns:repeat(2,1fr);}
+    .role-grid{grid-template-columns:repeat(3,1fr);}
+    .projects-grid{grid-template-columns:repeat(2,1fr);}
+    .stats-strip{grid-template-columns:repeat(2,1fr);}
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-illustration{height:340px;margin-top:20px;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media(max-width:768px){
+    .nav-links{display:none;}
+    .hamburger{display:block;}
+    .role-grid{grid-template-columns:repeat(2,1fr);}
+    .projects-grid{grid-template-columns:1fr;}
+    .ai-list{grid-template-columns:1fr;}
+    .stats-strip{grid-template-columns:1fr 1fr;}
+    .dash-grid{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    section{padding:60px 0;}
+  }
+  @media(max-width:480px){
+    .dash-grid{grid-template-columns:1fr;}
+    .role-grid{grid-template-columns:1fr 1fr;}
+    .stats-strip{grid-template-columns:1fr;}
+    .hero-btns{flex-direction:column;}
+    .btn{width:100%;justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">⚡</div>
+      CampusFlow AI
+    </div>
+    <ul class="nav-links">
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#mentor">AI Mentor</a></li>
+    </ul>
+    <button class="nav-cta">Get Started</button>
+    <button class="hamburger">☰</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="fade-up visible">
+      <div class="eyebrow">🚀 AI-Powered Career Guidance</div>
+      <h1>Your Personalized <span class="gradient-text">Placement Roadmap</span></h1>
+      <p class="lead">Follow a structured path from beginner to placement-ready with AI-powered guidance, curated resources, and real-time progress tracking.</p>
+      <div class="hero-btns">
+        <a href="#dashboard" class="btn btn-primary">Start Your Journey →</a>
+        <a href="#roadmap" class="btn btn-outline">Explore Roadmap</a>
+      </div>
+    </div>
+    <div class="hero-illustration">
+      <div class="roadmap-orb"></div>
+      <div class="center-node">🎯</div>
+      <div class="illustration-card glass card-1">
+        <div class="ic-icon">📚</div>
+        <div class="ic-title">Fundamentals</div>
+        <div class="ic-sub">Phase 1 · Completed</div>
+      </div>
+      <div class="illustration-card glass card-2">
+        <div class="ic-icon">💻</div>
+        <div class="ic-title">Core Skills</div>
+        <div class="ic-sub">Phase 2 · In Progress</div>
+      </div>
+      <div class="illustration-card glass card-3">
+        <div class="ic-icon">🏆</div>
+        <div class="ic-title">Job Ready</div>
+        <div class="ic-sub">Phase 5 · Locked</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+  <div class="container">
+    <div class="fade-up">
+      <div class="eyebrow">📊 Your Progress</div>
+      <h2 class="section-title">Placement Progress Dashboard</h2>
+      <p class="section-sub">Track your overall readiness at a glance — updated in real time as you complete modules.</p>
+    </div>
+    <div class="dash-grid fade-up">
+      <div class="glass stat-card">
+        <div class="stat-icon">🧭</div>
+        <div class="stat-value" data-count="68">0%</div>
+        <div class="stat-label">Roadmap Completion</div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" data-count="14">0</div>
+        <div class="stat-label">Skills Completed</div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value" data-count="6">0</div>
+        <div class="stat-label">Pending Tasks</div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon">🎤</div>
+        <div class="stat-value" data-count="82">0%</div>
+        <div class="stat-label">Interview Readiness</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAREER GOAL -->
+<section id="careers">
+  <div class="container">
+    <div class="fade-up">
+      <div class="eyebrow">🎯 Career Path</div>
+      <h2 class="section-title">Choose Your Career Goal</h2>
+      <p class="section-sub">Select a role to personalize your roadmap, skill tracker, and AI mentor suggestions.</p>
+    </div>
+    <div class="role-grid fade-up">
+      <div class="role-card glass active" data-role="sde">
+        <span class="role-emoji">💻</span>
+        <div class="role-name">Software Developer</div>
+        <div class="role-tag">Most Popular</div>
+      </div>
+      <div class="role-card glass" data-role="data">
+        <span class="role-emoji">📊</span>
+        <div class="role-name">Data Analyst</div>
+        <div class="role-tag">High Demand</div>
+      </div>
+      <div class="role-card glass" data-role="cloud">
+        <span class="role-emoji">☁️</span>
+        <div class="role-name">Cloud Engineer</div>
+        <div class="role-tag">Trending</div>
+      </div>
+      <div class="role-card glass" data-role="ai">
+        <span class="role-emoji">🤖</span>
+        <div class="role-name">AI / ML Engineer</div>
+        <div class="role-tag">Future-Ready</div>
+      </div>
+      <div class="role-card glass" data-role="fullstack">
+        <span class="role-emoji">🌐</span>
+        <div class="role-name">Full Stack Dev</div>
+        <div class="role-tag">Versatile</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="roadmap">
+  <div class="container">
+    <div class="fade-up">
+      <div class="eyebrow">🗺️ Step-by-Step Path</div>
+      <h2 class="section-title">Your Roadmap Timeline</h2>
+      <p class="section-sub">A structured 5-phase journey designed to take you from fundamentals to job-ready, step by step.</p>
+    </div>
+
+    <div class="timeline fade-up">
+      <div class="phase">
+        <div class="phase-dot">1</div>
+        <div class="glass phase-card">
+          <div class="phase-meta">Phase 1 · Foundation</div>
+          <h3>Fundamentals</h3>
+          <div class="phase-items">
+            <span class="phase-chip">Programming Basics</span>
+            <span class="phase-chip">Problem Solving</span>
+            <span class="phase-chip">Git & GitHub</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">2</div>
+        <div class="glass phase-card">
+          <div class="phase-meta">Phase 2 · Foundation</div>
+          <h3>Core Skills</h3>
+          <div class="phase-items">
+            <span class="phase-chip">DSA</span>
+            <span class="phase-chip">DBMS</span>
+            <span class="phase-chip">OOPs</span>
+            <span class="phase-chip">Operating Systems</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">3</div>
+        <div class="glass phase-card">
+          <div class="phase-meta">Phase 3 · Building</div>
+          <h3>Development</h3>
+          <div class="phase-items">
+            <span class="phase-chip">Frontend</span>
+            <span class="phase-chip">Backend</span>
+            <span class="phase-chip">Projects</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">4</div>
+        <div class="glass phase-card">
+          <div class="phase-meta">Phase 4 · Preparation</div>
+          <h3>Placement Preparation</h3>
+          <div class="phase-items">
+            <span class="phase-chip">Aptitude</span>
+            <span class="phase-chip">Resume Building</span>
+            <span class="phase-chip">Interview Questions</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot">5</div>
+        <div class="glass phase-card">
+          <div class="phase-meta">Phase 5 · Launch</div>
+          <h3>Job Ready</h3>
+          <div class="phase-items">
+            <span class="phase-chip">Mock Interviews</span>
+            <span class="phase-chip">Portfolio</span>
+            <span class="phase-chip">Applications</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILL TRACKER -->
+<section id="skills">
+  <div class="container">
+    <div class="fade-up">
+      <div class="eyebrow">📈 Skill Tracker</div>
+      <h2 class="section-title">Your Skill Progress</h2>
+      <p class="section-sub">Monitor how far you've progressed across key placement skill areas.</p>
+    </div>
+    <div class="glass skills-card fade-up">
+      <div class="skill-row">
+        <div class="skill-top"><span>Data Structures & Algorithms</span><span class="pct">75%</span></div>
+        <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-top"><span>DBMS</span><span class="pct">90%</span></div>
+        <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-top"><span>OOPs</span><span class="pct">80%</span></div>
+        <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-top"><span>Web Development</span><span class="pct">65%</span></div>
+        <div class="skill-bar"><div class="skill-fill" data-width="65"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-top"><span>Aptitude</span><span class="pct">60%</span></div>
+        <div class="skill-bar"><div class="skill-fill" data-width="60"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="fade-up">
+      <div class="eyebrow">🛠️ Build & Showcase</div>
+      <h2 class="section-title">Recommended Projects</h2>
+      <p class="section-sub">Hands-on projects that strengthen your resume and demonstrate real-world skills to recruiters.</p>
+    </div>
+    <div class="projects-grid fade-up">
+      <div class="glass project-card">
+        <div class="project-icon">🏫</div>
+        <h4>Campus Management System</h4>
+        <p>A full-stack platform to manage students, courses, and attendance records.</p>
+        <span class="project-level">Intermediate</span>
+      </div>
+      <div class="glass project-card">
+        <div class="project-icon">🧠</div>
+        <h4>AI Notes Summarizer</h4>
+        <p>An AI-powered tool that condenses lecture notes into concise summaries.</p>
+        <span class="project-level">Advanced</span>
+      </div>
+      <div class="glass project-card">
+        <div class="project-icon">🛒</div>
+        <h4>E-Commerce Platform</h4>
+        <p>A complete online store with cart, payments, and admin dashboard.</p>
+        <span class="project-level">Advanced</span>
+      </div>
+      <div class="glass project-card">
+        <div class="project-icon">🪪</div>
+        <h4>Portfolio Website</h4>
+        <p>A personal site to showcase your projects, skills, and resume.</p>
+        <span class="project-level">Beginner</span>
+      </div>
+      <div class="glass project-card">
+        <div class="project-icon">💬</div>
+        <h4>Chat Application</h4>
+        <p>A real-time messaging app with rooms, auth, and live notifications.</p>
+        <span class="project-level">Intermediate</span>
+      </div>
+      <div class="glass project-card">
+        <div class="project-icon">➕</div>
+        <h4>More Projects</h4>
+        <p>Unlock 20+ curated project ideas tailored to your selected career path.</p>
+        <span class="project-level">Personalized</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI MENTOR -->
+<section id="mentor">
+  <div class="container">
+    <div class="fade-up">
+      <div class="eyebrow">✨ Personalized for You</div>
+      <h2 class="section-title">AI Mentor Recommendations</h2>
+      <p class="section-sub">Smart, data-driven suggestions based on your current progress and goals.</p>
+    </div>
+    <div class="glass ai-card fade-up">
+      <div class="ai-header">
+        <div class="ai-avatar">🤖</div>
+        <div>
+          <h3>This Week's Focus</h3>
+          <p>Updated based on your activity & skill gaps</p>
+        </div>
+      </div>
+      <div class="ai-list">
+        <div class="ai-item">
+          <div class="ai-check">✓</div>
+          <p>Complete the DSA Arrays Module</p>
+        </div>
+        <div class="ai-item">
+          <div class="ai-check">✓</div>
+          <p>Build One Full Stack Project</p>
+        </div>
+        <div class="ai-item">
+          <div class="ai-check">✓</div>
+          <p>Improve Your Resume Score</p>
+        </div>
+        <div class="ai-item">
+          <div class="ai-check">✓</div>
+          <p>Practice 20 Aptitude Questions</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="container">
+    <div class="fade-up">
+      <div class="eyebrow">📦 Everything You Need</div>
+      <h2 class="section-title">Placement Resources at Your Fingertips</h2>
+    </div>
+    <div class="stats-strip fade-up">
+      <div class="glass stat-big">
+        <div class="num">100+</div>
+        <div class="lbl">Interview Questions</div>
+      </div>
+      <div class="glass stat-big">
+        <div class="num">50+</div>
+        <div class="lbl">Learning Resources</div>
+      </div>
+      <div class="glass stat-big">
+        <div class="num">20+</div>
+        <div class="lbl">Project Ideas</div>
+      </div>
+      <div class="glass stat-big">
+        <div class="num">1:1</div>
+        <div class="lbl">Personalized Guidance</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="glass cta-box fade-up">
+      <h2>Start Your Placement Journey <span class="gradient-text">Today</span></h2>
+      <p>Get a personalized roadmap built around your goals, skills, and timeline — powered by AI.</p>
+      <div class="cta-btns">
+        <a href="#" class="btn btn-primary">Generate My Roadmap →</a>
+        <a href="/AI/ai.html" class="btn btn-outline">Talk to AI Mentor</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="logo-mark">⚡</div>
+          CampusFlow AI
+        </div>
+        <p>AI-powered placement preparation platform helping students become career-ready with personalized roadmaps, skill tracking, and mentorship.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Roadmap</a></li>
+          <li><a href="#">Skill Tracker</a></li>
+          <li><a href="/AI/ai.html">AI Mentor</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Interview Prep</a></li>
+          <li><a href="#">Project Ideas</a></li>
+          <li><a href="#">Aptitude Tests</a></li>
+          <li><a href="#">Resume Builder</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 CampusFlow AI. All rights reserved.</span>
+      <span>Built with 💜 for students everywhere.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Role selection
+  document.querySelectorAll('.role-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+    });
+  });
+
+  // Animate counters
+  function animateCount(el){
+    const target = parseInt(el.getAttribute('data-count'));
+    const isPercent = el.textContent.includes('%');
+    let current = 0;
+    const step = Math.max(1, Math.ceil(target / 40));
+    const interval = setInterval(() => {
+      current += step;
+      if(current >= target){
+        current = target;
+        clearInterval(interval);
+      }
+      el.textContent = current + (isPercent ? '%' : '');
+    }, 25);
+  }
+
+  // Animate skill bars
+  function animateSkillBars(){
+    document.querySelectorAll('.skill-fill').forEach(bar => {
+      const w = bar.getAttribute('data-width');
+      bar.style.width = w + '%';
+    });
+  }
+
+  // Scroll reveal + trigger animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+
+        if(entry.target.id === 'dashboard'){
+          entry.target.querySelectorAll('.stat-value').forEach(animateCount);
+        }
+        if(entry.target.id === 'skills'){
+          animateSkillBars();
+        }
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Smooth nav highlight on scroll (basic)
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if(target){
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

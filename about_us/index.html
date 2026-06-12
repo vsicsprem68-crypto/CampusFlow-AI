@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About Us — CampusFlow AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #07112B;
+    --navy-mid:    #0D1B3E;
+    --navy-light:  #142050;
+    --purple:      #A855F7;
+    --purple-dim:  #7C3AED;
+    --violet:      #6D28D9;
+    --glow:        rgba(168,85,247,.18);
+    --glow-strong: rgba(168,85,247,.35);
+    --text:        #E2E8F0;
+    --text-muted:  #94A3B8;
+    --border:      rgba(168,85,247,.15);
+    --glass-bg:    rgba(13,27,62,.55);
+    --radius:      16px;
+    --radius-lg:   24px;
+    --font-display:'Syne', sans-serif;
+    --font-body:   'Inter', sans-serif;
+    --transition:  .35s cubic-bezier(.4,0,.2,1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--navy);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ── NOISE OVERLAY ─────────────────────────────────────────── */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── NAV ───────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    height: 68px;
+    background: rgba(7,17,43,.8);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 30%, var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: .875rem; color: var(--text-muted); text-decoration: none;
+    transition: color var(--transition);
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    padding: .5rem 1.25rem;
+    background: linear-gradient(135deg, var(--purple-dim), var(--purple));
+    border: none; border-radius: 8px;
+    font-family: var(--font-body); font-size: .875rem; font-weight: 600;
+    color: #fff; cursor: pointer; text-decoration: none;
+    transition: opacity var(--transition), transform var(--transition);
+  }
+  .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+  .nav-mobile-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+
+  /* ── SECTION WRAPPER ───────────────────────────────────────── */
+  section { position: relative; z-index: 1; }
+  .container { max-width: 1180px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 3rem); }
+
+  /* ── EYEBROW LABEL ─────────────────────────────────────────── */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-size: .75rem; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--purple);
+    background: rgba(168,85,247,.1);
+    border: 1px solid rgba(168,85,247,.25);
+    border-radius: 100px; padding: .35rem .9rem;
+    margin-bottom: 1.25rem;
+  }
+  .eyebrow::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--purple); }
+
+  /* ── HERO ──────────────────────────────────────────────────── */
+  #hero {
+    min-height: 100svh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 100px clamp(1.5rem,5vw,3rem) 80px;
+    overflow: hidden;
+  }
+
+  /* animated mesh gradient */
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(109,40,217,.45) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 50% at 80% 80%,  rgba(168,85,247,.2) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 40% at 10% 90%,  rgba(109,40,217,.15) 0%, transparent 60%),
+                var(--navy);
+    animation: gradShift 12s ease-in-out infinite alternate;
+  }
+  @keyframes gradShift {
+    0%  { background-position: 50% 0%, 80% 80%, 10% 90%; }
+    100%{ background-position: 48% 5%, 82% 78%, 12% 88%; filter:brightness(1.08); }
+  }
+
+  /* floating orbs */
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+    animation: orbFloat 8s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 420px; height:420px; top:-80px; left:-100px;
+            background: rgba(109,40,217,.22); animation-delay:0s; }
+  .orb-2 { width: 320px; height:320px; top:40%; right:-60px;
+            background: rgba(168,85,247,.18); animation-delay:-4s; }
+  .orb-3 { width: 260px; height:260px; bottom:-40px; left:35%;
+            background: rgba(124,58,237,.2); animation-delay:-2s; }
+  @keyframes orbFloat {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-40px) scale(1.06); }
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 820px; }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -.02em;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(160deg, #fff 40%, var(--purple) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-title em { font-style: normal; -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, var(--purple), #c084fc);
+    -webkit-background-clip: text; }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--text-muted); max-width: 640px; margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    padding: .85rem 2rem;
+    background: linear-gradient(135deg, var(--violet), var(--purple));
+    border: none; border-radius: 10px;
+    font-family: var(--font-body); font-size: 1rem; font-weight: 600;
+    color: #fff; cursor: pointer; text-decoration: none;
+    box-shadow: 0 0 28px var(--glow-strong);
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 48px var(--glow-strong); }
+
+  .btn-ghost {
+    padding: .85rem 2rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--font-body); font-size: 1rem; font-weight: 500;
+    color: var(--text); cursor: pointer; text-decoration: none;
+    backdrop-filter: blur(6px);
+    transition: border-color var(--transition), background var(--transition), transform var(--transition);
+  }
+  .btn-ghost:hover { border-color: var(--purple); background: var(--glow); transform: translateY(-2px); }
+
+  /* scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .4rem;
+    font-size: .7rem; letter-spacing: .1em; color: var(--text-muted);
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  .scroll-hint svg { opacity: .5; }
+  @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+  /* ── MISSION ───────────────────────────────────────────────── */
+  #mission { padding: 120px 0; }
+
+  .mission-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  }
+
+  .mission-text h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
+    line-height: 1.15; margin-bottom: 1.25rem;
+  }
+  .mission-text p {
+    color: var(--text-muted); line-height: 1.8; margin-bottom: 1rem; font-size: 1.05rem;
+  }
+
+  .pain-list { list-style: none; margin-top: 1.5rem; display: flex; flex-direction: column; gap: .75rem; }
+  .pain-list li {
+    display: flex; align-items: flex-start; gap: .75rem;
+    font-size: .95rem; color: var(--text-muted);
+  }
+  .pain-list li .icon-check {
+    width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;
+    background: linear-gradient(135deg, var(--violet), var(--purple));
+    border-radius: 50%; display: grid; place-items: center;
+  }
+  .pain-list li .icon-check svg { width:10px; height:10px; }
+
+  .mission-visual {
+    position: relative; height: 380px;
+  }
+  .mission-card-stack {
+    position: relative; width: 100%; height: 100%;
+  }
+  .mcard {
+    position: absolute;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    transition: transform var(--transition);
+  }
+  .mcard-1 { top:0; left:0; right:40px; }
+  .mcard-2 { top:110px; left:30px; right:0; }
+  .mcard-3 { top:220px; left:60px; right:20px; }
+  .mcard:hover { transform: translateY(-4px) scale(1.01); }
+  .mcard-label { font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--purple); margin-bottom:.4rem; }
+  .mcard-stat { font-family:var(--font-display); font-size:1.9rem; font-weight:800; }
+  .mcard-desc { font-size:.82rem; color:var(--text-muted); margin-top:.25rem; }
+
+  /* divider line */
+  .divider {
+    height:1px; background:linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* ── FEATURES ──────────────────────────────────────────────── */
+  #features { padding: 120px 0; }
+
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15;
+    margin-bottom: .75rem;
+  }
+  .section-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 540px; margin: 0 auto; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .feat-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    position: relative; overflow: hidden;
+    transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    cursor: default;
+  }
+  .feat-card::after {
+    content:''; position:absolute; inset:0; border-radius:inherit;
+    background: linear-gradient(135deg, rgba(168,85,247,.06), transparent);
+    opacity:0; transition: opacity var(--transition);
+  }
+  .feat-card:hover { transform: translateY(-6px); border-color: rgba(168,85,247,.35); box-shadow: 0 20px 60px rgba(109,40,217,.2); }
+  .feat-card:hover::after { opacity:1; }
+
+  .feat-icon {
+    width: 52px; height: 52px; border-radius: 14px; margin-bottom: 1.25rem;
+    background: linear-gradient(135deg, rgba(109,40,217,.3), rgba(168,85,247,.15));
+    border: 1px solid rgba(168,85,247,.25);
+    display: grid; place-items: center;
+    font-size: 1.5rem;
+    transition: transform var(--transition);
+  }
+  .feat-card:hover .feat-icon { transform: scale(1.1) rotate(-4deg); }
+
+  .feat-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
+  .feat-card p  { font-size: .9rem; color: var(--text-muted); line-height: 1.7; }
+
+  /* ── WHY ───────────────────────────────────────────────────── */
+  #why { padding: 120px 0; background: linear-gradient(180deg, transparent, rgba(109,40,217,.05) 50%, transparent); }
+
+  .why-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+
+  .why-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    position: relative; overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .why-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(109,40,217,.18); }
+
+  .why-card-num {
+    font-family: var(--font-display);
+    font-size: 4rem; font-weight: 800; line-height: 1;
+    background: linear-gradient(135deg, var(--purple) 0%, rgba(168,85,247,.2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: .75rem; display: block;
+  }
+  .why-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: .6rem; }
+  .why-card p  { font-size: .9rem; color: var(--text-muted); line-height: 1.7; }
+
+  /* corner accent */
+  .why-card::before {
+    content:''; position:absolute; top:0; right:0;
+    width:120px; height:120px;
+    background: radial-gradient(circle at 100% 0%, rgba(168,85,247,.12), transparent 70%);
+  }
+
+  /* ── VISION ────────────────────────────────────────────────── */
+  #vision { padding: 120px 0; }
+
+  .vision-inner {
+    max-width: 860px; margin: 0 auto; text-align: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 32px; padding: 5rem clamp(2rem, 6vw, 5rem);
+    position: relative; overflow: hidden;
+  }
+  .vision-inner::before {
+    content:''; position:absolute; top:-60%; left:50%;
+    transform: translateX(-50%);
+    width:400px; height:400px; border-radius:50%;
+    background: radial-gradient(circle, rgba(168,85,247,.18), transparent 70%);
+    pointer-events:none;
+  }
+  .vision-inner blockquote {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 800;
+    line-height: 1.3; color: #fff;
+    quotes: none; position: relative; z-index: 1;
+  }
+  .vision-inner blockquote span { color: var(--purple); }
+
+  /* ── TEAM ──────────────────────────────────────────────────── */
+  #team { padding: 120px 0; }
+
+  .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+  .team-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-align: center;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .team-card:hover { transform: translateY(-6px); box-shadow: 0 24px 64px rgba(109,40,217,.2); }
+
+  .avatar {
+    width: 88px; height: 88px; border-radius: 50%; margin: 0 auto 1.25rem;
+    background: linear-gradient(135deg, var(--violet), var(--purple));
+    display: grid; place-items: center;
+    font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: #fff;
+    border: 2px solid rgba(168,85,247,.3);
+    position: relative;
+  }
+  .avatar-ring {
+    position:absolute; inset:-6px; border-radius:50%;
+    border:2px solid transparent;
+    background: linear-gradient(var(--navy-mid), var(--navy-mid)) padding-box,
+                linear-gradient(135deg, var(--purple), transparent) border-box;
+    animation: spinRing 8s linear infinite;
+  }
+  @keyframes spinRing { to { transform: rotate(360deg); } }
+
+  .team-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .25rem; }
+  .team-card .role { font-size: .82rem; color: var(--purple); font-weight: 600; margin-bottom: .75rem; letter-spacing: .04em; }
+  .team-card .bio { font-size: .85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem; }
+
+  .socials { display: flex; justify-content: center; gap: .75rem; }
+  .socials a {
+    width: 34px; height: 34px; border-radius: 8px;
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    color: var(--text-muted); text-decoration: none;
+    transition: border-color var(--transition), color var(--transition), background var(--transition);
+  }
+  .socials a:hover { border-color: var(--purple); color: var(--purple); background: var(--glow); }
+  .socials svg { width:15px; height:15px; }
+
+  /* ── CTA ───────────────────────────────────────────────────── */
+  #cta { padding: 120px 0; }
+
+  .cta-inner {
+    background: linear-gradient(135deg, rgba(109,40,217,.2) 0%, rgba(168,85,247,.08) 100%);
+    border: 1px solid rgba(168,85,247,.3);
+    border-radius: 32px; padding: 5rem clamp(2rem, 6vw, 5rem);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-inner::before {
+    content:''; position:absolute; inset:0; border-radius:inherit;
+    background: radial-gradient(ellipse 70% 80% at 50% 0%, rgba(168,85,247,.15), transparent 70%);
+    pointer-events:none;
+  }
+  .cta-inner h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800;
+    line-height: 1.15; margin-bottom: .75rem; position: relative; z-index:1;
+  }
+  .cta-inner p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2.5rem; position: relative; z-index:1; }
+  .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; z-index:1; }
+
+  /* ── FOOTER ────────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem clamp(1.5rem, 5vw, 4rem) 2rem;
+    position: relative; z-index:1;
+  }
+  .footer-inner {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem;
+  }
+  .footer-brand p { font-size:.85rem; color: var(--text-muted); line-height: 1.7; margin-top: .75rem; max-width: 280px; }
+
+  .footer-col h4 { font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color: var(--text-muted); margin-bottom:1rem; }
+  .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:.6rem; }
+  .footer-col ul a { font-size:.875rem; color: var(--text-muted); text-decoration:none; transition: color var(--transition); }
+  .footer-col ul a:hover { color: var(--text); }
+
+  .footer-bottom {
+    max-width: 1180px; margin: 2rem auto 0;
+    padding-top: 1.5rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .8rem; color: var(--text-muted);
+  }
+  .footer-bottom span { opacity: .5; }
+
+  /* ── ANIMATIONS ─────────────────────────────────────────────── */
+  .reveal {
+    opacity: 0; transform: translateY(36px);
+    transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* stagger children */
+  .stagger-children > * { opacity:0; transform: translateY(24px); transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.4,0,.2,1); }
+  .stagger-children.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:.05s; }
+  .stagger-children.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:.15s; }
+  .stagger-children.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:.25s; }
+  .stagger-children.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:.35s; }
+  .stagger-children.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:.45s; }
+  .stagger-children.visible > *:nth-child(6) { opacity:1; transform:none; transition-delay:.55s; }
+
+  /* ── RESPONSIVE ─────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .mission-grid { grid-template-columns: 1fr; }
+    .mission-visual { display: none; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-brand { grid-column: span 2; }
+  }
+
+  @media (max-width: 600px) {
+    .nav-links, .nav-cta { display: none; }
+    .nav-mobile-toggle { display: block; }
+    nav.open .nav-links {
+      display: flex; flex-direction: column;
+      position: absolute; top: 68px; left: 0; right: 0;
+      background: rgba(7,17,43,.97); backdrop-filter: blur(20px);
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    nav.open .nav-links li a { font-size: 1rem; }
+    nav.open .nav-cta {
+      display: inline-block; margin: .75rem 2rem 1.5rem;
+      position: absolute; top: 68px; left: 0; right:0;
+    }
+    .features-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+    .footer-brand { grid-column: span 1; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    .cta-actions { flex-direction: column; align-items: center; }
+    .footer-bottom { flex-direction: column; gap: .5rem; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">CampusFlow AI</a>
+  <ul class="nav-links">
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#cta">Get Started</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Try Free</a>
+  <button class="nav-mobile-toggle" aria-label="Toggle menu" onclick="document.getElementById('navbar').classList.toggle('open')">☰</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════ HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-content">
+    <span class="eyebrow">About CampusFlow AI</span>
+    <h1 class="hero-title">Empowering Students<br>with <em>AI</em></h1>
+    <p class="hero-sub">CampusFlow AI is built to simplify academic life by bringing attendance tracking, smart notes, assignment management, placement preparation, and AI guidance into one platform.</p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">Get Started Free</a>
+      <a href="#features" class="btn-ghost">Explore Features</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <svg width="16" height="20" viewBox="0 0 16 20" fill="none"><rect x="6.5" y="3" width="3" height="6" rx="1.5" fill="currentColor"/><rect x="1" y="1" width="14" height="18" rx="7" stroke="currentColor" stroke-width="1.5"/></svg>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════ MISSION -->
+<section id="mission">
+  <div class="container">
+    <div class="mission-grid">
+      <div class="mission-text reveal">
+        <span class="eyebrow">Our Mission</span>
+        <h2>Students deserve better tools.<br>We built them.</h2>
+        <p>Every semester, millions of students juggle a dozen disconnected apps — one for notes, another for deadlines, a third for attendance, and none of them talk to each other. The result is cognitive overload, missed submissions, and wasted potential.</p>
+        <p>CampusFlow AI fixes this. By combining AI-driven automation with a deeply student-centric design, we turn the chaos of campus life into a calm, organized flow.</p>
+        <ul class="pain-list">
+          <li>
+            <span class="icon-check"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Unified platform — no more context switching between apps
+          </li>
+          <li>
+            <span class="icon-check"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            AI that understands your syllabus, schedule, and learning pace
+          </li>
+          <li>
+            <span class="icon-check"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Built for Indian universities — attendance rules, placement cycles, everything
+          </li>
+          <li>
+            <span class="icon-check"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Zero setup — get productive in under two minutes
+          </li>
+        </ul>
+      </div>
+
+      <div class="mission-visual reveal">
+        <div class="mission-card-stack">
+          <div class="mcard mcard-1">
+            <div class="mcard-label">Attendance Rate</div>
+            <div class="mcard-stat">94.2%</div>
+            <div class="mcard-desc">Students who use CampusFlow maintain healthy attendance automatically</div>
+          </div>
+          <div class="mcard mcard-2">
+            <div class="mcard-label">Time Saved Weekly</div>
+            <div class="mcard-stat">6.5 hrs</div>
+            <div class="mcard-desc">Average time reclaimed from manual academic management tasks</div>
+          </div>
+          <div class="mcard mcard-3">
+            <div class="mcard-label">Assignment Submission</div>
+            <div class="mcard-stat">↑ 38%</div>
+            <div class="mcard-desc">Increase in on-time submissions after enabling smart reminders</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════ FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">What We Offer</span>
+      <h2>Every tool a student needs,<br>powered by AI</h2>
+      <p>Six core capabilities, deeply integrated, so your academic life runs itself.</p>
+    </div>
+
+    <div class="features-grid stagger-children">
+      <div class="feat-card">
+        <div class="feat-icon">📅</div>
+        <h3>Attendance Tracker</h3>
+        <p>Real-time attendance monitoring with automatic alerts when you're approaching the threshold — before it becomes a problem.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🧠</div>
+        <h3>AI Notes Summarizer</h3>
+        <p>Drop in lecture recordings, PDFs, or raw notes. Get back crisp summaries, flashcards, and concept maps in seconds.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⏰</div>
+        <h3>Assignment Reminder</h3>
+        <p>Smart deadline tracking that learns your submission habits and nudges you with the right urgency at the right time.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Smart Study Planner</h3>
+        <p>AI-generated study schedules that adapt around your timetable, backlog, and exam calendar — not the other way around.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🚀</div>
+        <h3>Placement Roadmap</h3>
+        <p>Personalized preparation timelines for campus placements — DSA, aptitude, HR rounds — with progress tracking built in.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💬</div>
+        <h3>AI Mentor</h3>
+        <p>A 24/7 academic assistant that answers doubts, explains concepts, reviews your work, and keeps you on track.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════ WHY -->
+<section id="why">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Why CampusFlow AI</span>
+      <h2>Built different, by design</h2>
+      <p>Four principles that separate us from every other student productivity tool.</p>
+    </div>
+
+    <div class="why-grid stagger-children">
+      <div class="why-card">
+        <span class="why-card-num">01</span>
+        <h3>All-in-One Platform</h3>
+        <p>Attendance, notes, assignments, placement prep, and your AI mentor live in a single coherent workspace. No tabs, no subscriptions, no friction.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-card-num">02</span>
+        <h3>AI-Powered Productivity</h3>
+        <p>Every feature is backed by models that understand academic context — not generic AI bolted onto a to-do list. The platform gets smarter as your semester progresses.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-card-num">03</span>
+        <h3>Student-Centric Design</h3>
+        <p>Designed with real students, not for hypothetical ones. Every screen, every flow, every notification was pressure-tested by people who actually use it at 2 AM before a submission.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-card-num">04</span>
+        <h3>Smart Academic Planning</h3>
+        <p>Your plan adapts when life happens. Missed a class? Skipped a study session? CampusFlow rebalances without drama and keeps you moving toward your goals.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════ VISION -->
+<section id="vision">
+  <div class="container">
+    <div class="section-header reveal" style="margin-bottom:2.5rem">
+      <span class="eyebrow">Our Vision</span>
+    </div>
+    <div class="vision-inner reveal">
+      <blockquote>
+        "We envision a future where every student has access to a personal <span>AI-powered academic assistant</span> that helps them stay organized, productive, and career-ready — regardless of their college or background."
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════ TEAM -->
+<section id="team">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">The Team</span>
+      <h2>Built by students,<br>for students</h2>
+      <p>A small, focused team obsessed with making campus life less stressful.</p>
+    </div>
+
+    <div class="team-grid stagger-children">
+      <div class="team-card">
+        <div class="avatar">
+          A
+          <div class="avatar-ring"></div>
+        </div>
+        <h3>Aman Awasthi</h3>
+        <div class="role">Co-founder & CEO</div>
+        <p class="bio">BCA student with a passion for solving real student problems through technology. Focused on product vision, user experience, and building solutions that make academic life simpler and more organized.</p>
+        <div class="socials">
+          <a href="#" aria-label="Twitter">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#6D28D9,#2563EB)">
+          P
+          <div class="avatar-ring"></div>
+        </div>
+        <h3>Prem Singh</h3>
+        <div class="role">Co-founder & CEO</div>
+        <p class="bio">BCA student and aspiring software developer with a strong interest in web development and AI-powered applications. Leads the technical development of CampusFlow AI and focuses on creating practical solutions for students.</p>
+        <div class="socials">
+          <a href="#" aria-label="Twitter">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#7C3AED,#DB2777)">
+          R
+          <div class="avatar-ring"></div>
+        </div>
+        <h3>Nipurn Pandey</h3>
+        <div class="role">Co-founder & CEO</div>
+        <p class="bio">Creative thinker and designer focused on building intuitive, modern, and user-friendly digital experiences for students.</p>
+        <div class="socials">
+          <a href="#" aria-label="Twitter">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" aria-label="Dribbble">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════ CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <h2>Ready to Transform<br>Your Campus Life?</h2>
+      <p>Join thousands of students who've already made the switch. Free to start, no credit card needed.</p>
+      <div class="cta-actions">
+        <a href="#" class="btn-primary">Get Started Free</a>
+        <a href="#features" class="btn-ghost">Explore Features</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">CampusFlow AI</a>
+      <p>The all-in-one AI platform for students who want to stay organized, productive, and career-ready — without the chaos.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Changelog</a></li>
+        <li><a href="#">Roadmap</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2025 CampusFlow AI. All rights reserved.</span>
+    <span>Made with ♥ for students everywhere</span>
+  </div>
+</footer>
+
+<script>
+  // ── Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal, .stagger-children').forEach(el => observer.observe(el));
+
+  // ── Navbar scroll style
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.style.background = window.scrollY > 40
+      ? 'rgba(7,17,43,.95)'
+      : 'rgba(7,17,43,.8)';
+  }, { passive: true });
+
+  // ── Tilt effect on feature cards (desktop only)
+  if (window.matchMedia('(hover:hover)').matches) {
+    document.querySelectorAll('.feat-card, .why-card, .team-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - .5;
+        const y = (e.clientY - r.top)  / r.height - .5;
+        card.style.transform = `translateY(-6px) rotateY(${x * 6}deg) rotateX(${-y * 4}deg)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // ── Close mobile nav on link click
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => navbar.classList.remove('open'));
+  });
+</script>
+</body>
+</html>

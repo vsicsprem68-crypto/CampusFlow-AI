@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusFlow Ai – Attendance Tracker</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --navy: #0d1117;
+      --navy2: #131a26;
+      --navy3: #1a2235;
+      --purple: #7c3aed;
+      --purple2: #9b59f5;
+      --purple3: #c084fc;
+      --accent: #a855f7;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --card: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.07);
+      --glass: rgba(124, 58, 237, 0.12);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 68px;
+      background: rgba(13, 17, 23, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.18rem;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--purple), var(--purple3));
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.88rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+      font-weight: 400;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #fff;
+    }
+
+    .nav-links a.active {
+      color: var(--purple3);
+    }
+
+    .btn-login {
+      padding: 8px 22px;
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.88rem;
+      cursor: pointer;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s, background .2s;
+    }
+
+    .btn-login:hover {
+      border-color: var(--purple2);
+      background: var(--glass);
+    }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      background: linear-gradient(135deg, var(--navy2) 0%, #1a0a3a 50%, var(--navy2) 100%);
+      padding: 52px 40px 44px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -80px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.28) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .page-header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      left: 20%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.14) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .header-left h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .header-left h1 span {
+      color: var(--purple3);
+    }
+
+    .header-left p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hstat {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 22px;
+      text-align: center;
+      min-width: 110px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hstat .num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      display: block;
+    }
+
+    .hstat .lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px;
+      display: block;
+    }
+
+    .hstat.green .num {
+      color: var(--green);
+    }
+
+    .hstat.yellow .num {
+      color: var(--yellow);
+    }
+
+    .hstat.red .num {
+      color: var(--red);
+    }
+
+    .hstat.purple .num {
+      color: var(--purple3);
+    }
+
+    /* ─── MAIN ─── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 36px 40px 60px;
+    }
+
+    /* ─── SECTION LABEL ─── */
+    .sec-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--purple3);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sec-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── OVERALL CARD ─── */
+    .overall-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    .ov-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px 26px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+
+    .ov-card:hover {
+      border-color: rgba(124, 58, 237, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .ov-card .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+
+    .ov-card .card-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      display: block;
+    }
+
+    .ov-card .card-lbl {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .ov-card .card-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .ov-card.green .card-icon {
+      background: rgba(34, 197, 94, .15);
+    }
+
+    .ov-card.green .card-val {
+      color: var(--green);
+    }
+
+    .ov-card.green .card-tag {
+      background: rgba(34, 197, 94, .12);
+      color: var(--green);
+    }
+
+    .ov-card.yellow .card-icon {
+      background: rgba(245, 158, 11, .15);
+    }
+
+    .ov-card.yellow .card-val {
+      color: var(--yellow);
+    }
+
+    .ov-card.yellow .card-tag {
+      background: rgba(245, 158, 11, .12);
+      color: var(--yellow);
+    }
+
+    .ov-card.purple .card-icon {
+      background: rgba(124, 58, 237, .18);
+    }
+
+    .ov-card.purple .card-val {
+      color: var(--purple3);
+    }
+
+    .ov-card.purple .card-tag {
+      background: rgba(124, 58, 237, .15);
+      color: var(--purple3);
+    }
+
+    .ov-card .bg-glow {
+      position: absolute;
+      bottom: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      opacity: .06;
+      pointer-events: none;
+    }
+
+    .ov-card.green .bg-glow {
+      background: var(--green);
+    }
+
+    .ov-card.yellow .bg-glow {
+      background: var(--yellow);
+    }
+
+    .ov-card.purple .bg-glow {
+      background: var(--purple);
+    }
+
+    /* ─── TWO COLUMN ─── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 22px;
+      margin-bottom: 36px;
+    }
+
+    /* ─── SUBJECTS TABLE ─── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 20px 24px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-head h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .card-head span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .subject-row {
+      padding: 14px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      transition: background .18s;
+    }
+
+    .subject-row:last-child {
+      border-bottom: none;
+    }
+
+    .subject-row:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .subj-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .subj-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .subj-meta {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .subj-bar-wrap {
+      width: 100px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+    }
+
+    .subj-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .6s ease;
+    }
+
+    .subj-pct {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      min-width: 42px;
+      text-align: right;
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      min-width: 54px;
+      text-align: center;
+    }
+
+    .badge.safe {
+      background: rgba(34, 197, 94, .14);
+      color: var(--green);
+    }
+
+    .badge.warn {
+      background: rgba(245, 158, 11, .14);
+      color: var(--yellow);
+    }
+
+    .badge.danger {
+      background: rgba(239, 68, 68, .14);
+      color: var(--red);
+    }
+
+    .pct-green {
+      color: var(--green);
+    }
+
+    .pct-yellow {
+      color: var(--yellow);
+    }
+
+    .pct-red {
+      color: var(--red);
+    }
+
+    .bar-green {
+      background: linear-gradient(90deg, #16a34a, var(--green));
+    }
+
+    .bar-yellow {
+      background: linear-gradient(90deg, #b45309, var(--yellow));
+    }
+
+    .bar-red {
+      background: linear-gradient(90deg, #b91c1c, var(--red));
+    }
+
+    /* ─── MARK ATTENDANCE CARD ─── */
+    .mark-card {
+      padding: 0;
+    }
+
+    .mark-card .card-head {
+      padding: 20px 24px 16px;
+    }
+
+    .mark-body {
+      padding: 20px 24px;
+    }
+
+    .date-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .date-chip {
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .18s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .date-chip.active,
+    .date-chip:hover {
+      background: var(--glass);
+      border-color: var(--purple2);
+      color: #fff;
+    }
+
+    .today-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .att-subject-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .att-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      gap: 10px;
+      transition: border-color .2s;
+    }
+
+    .att-row:hover {
+      border-color: rgba(124, 58, 237, 0.3);
+    }
+
+    .att-sname {
+      font-size: 0.86rem;
+      font-weight: 500;
+    }
+
+    .att-toggle {
+      display: flex;
+      gap: 6px;
+    }
+
+    .att-btn {
+      padding: 5px 13px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .18s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .att-btn.present.active {
+      background: rgba(34, 197, 94, .18);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .att-btn.absent.active {
+      background: rgba(239, 68, 68, .18);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .att-btn:not(.active):hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .save-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--purple2));
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      letter-spacing: .02em;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .save-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+    }
+
+    /* ─── CALENDAR ─── */
+    .calendar-card {
+      margin-bottom: 36px;
+    }
+
+    .cal-body {
+      padding: 20px 24px 24px;
+    }
+
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .cal-nav .month {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .cal-arrow {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all .18s;
+    }
+
+    .cal-arrow:hover {
+      border-color: var(--purple2);
+      color: #fff;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-day-label {
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .06em;
+      padding-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .18s;
+      position: relative;
+    }
+
+    .cal-day:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .cal-day.empty {
+      pointer-events: none;
+    }
+
+    .cal-day.today {
+      background: var(--glass);
+      border: 1.5px solid var(--purple2);
+      color: var(--purple3);
+      font-weight: 700;
+    }
+
+    .cal-day.present {
+      background: rgba(34, 197, 94, .12);
+      color: var(--green);
+    }
+
+    .cal-day.absent {
+      background: rgba(239, 68, 68, .12);
+      color: var(--red);
+    }
+
+    .cal-day.holiday {
+      background: rgba(245, 158, 11, .10);
+      color: var(--yellow);
+    }
+
+    .cal-day .dot {
+      position: absolute;
+      bottom: 3px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+
+    .present .dot {
+      background: var(--green);
+    }
+
+    .absent .dot {
+      background: var(--red);
+    }
+
+    /* ─── LEGEND ─── */
+    .legend {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    /* ─── ALERTS ─── */
+    .alerts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    .alert-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 22px;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .alert-item:last-child {
+      border-bottom: none;
+    }
+
+    .alert-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .alert-icon.red {
+      background: rgba(239, 68, 68, .14);
+    }
+
+    .alert-icon.yellow {
+      background: rgba(245, 158, 11, .14);
+    }
+
+    .alert-icon.green {
+      background: rgba(34, 197, 94, .14);
+    }
+
+    .alert-text strong {
+      font-size: 0.86rem;
+      font-weight: 600;
+      display: block;
+    }
+
+    .alert-text span {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    /* ─── PROGRESS RING ─── */
+    .ring-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 24px;
+      gap: 10px;
+    }
+
+    .ring-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .ring-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .ring-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 130px;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ov-card {
+      animation: fadeUp .5s ease both;
+    }
+
+    .ov-card:nth-child(1) {
+      animation-delay: .05s;
+    }
+
+    .ov-card:nth-child(2) {
+      animation-delay: .12s;
+    }
+
+    .ov-card:nth-child(3) {
+      animation-delay: .19s;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+
+      .two-col,
+      .overall-row,
+      .alerts-row {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        padding: 0 18px;
+      }
+
+      .main,
+      .page-header {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-icon">🎓</div>
+      CampusFlow Ai
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">Ai Mentor</a></li>
+      <li><a href="#" class="active">Attendance</a></li>
+      <li><a href="#">Notes Summarizer</a></li>
+      <li><a href="#">Assignment Reminder</a></li>
+      <li><a href="#">Placement Roadmap</a></li>
+      <li><a href="#">About Us</a></li>
+    </ul>
+    <button class="btn-login">Login</button>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <h1>Attendance <span>Tracker</span></h1>
+        <p>Monitor your attendance across all subjects · Stay above 75% · Never miss a class</p>
+      </div>
+      <div class="header-stats">
+        <div class="hstat green">
+          <span class="num">82%</span>
+          <span class="lbl">Overall</span>
+        </div>
+        <div class="hstat purple">
+          <span class="num">6</span>
+          <span class="lbl">Subjects</span>
+        </div>
+        <div class="hstat yellow">
+          <span class="num">2</span>
+          <span class="lbl">At Risk</span>
+        </div>
+        <div class="hstat green">
+          <span class="num">38</span>
+          <span class="lbl">Days Present</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- OVERALL CARDS -->
+    <div class="sec-label">Overview</div>
+    <div class="overall-row">
+      <div class="ov-card green">
+        <div class="bg-glow"></div>
+        <div class="card-icon">✅</div>
+        <span class="card-val">38</span>
+        <div class="card-lbl">Classes Attended</div>
+        <span class="card-tag">This Semester</span>
+      </div>
+      <div class="ov-card yellow">
+        <div class="bg-glow"></div>
+        <div class="card-icon">⚠️</div>
+        <span class="card-val">8</span>
+        <div class="card-lbl">Classes Missed</div>
+        <span class="card-tag">Need Attention</span>
+      </div>
+      <div class="ov-card purple">
+        <div class="bg-glow"></div>
+        <div class="card-icon">🎯</div>
+        <span class="card-val">7</span>
+        <div class="card-lbl">Bunks Remaining</div>
+        <span class="card-tag">Stay on Track</span>
+      </div>
+    </div>
+
+    <!-- TWO COLUMN: SUBJECTS + MARK ATTENDANCE -->
+    <div class="two-col">
+
+      <!-- SUBJECTS TABLE -->
+      <div class="card">
+        <div class="card-head">
+          <h3>📚 Subject-wise Attendance</h3>
+          <span>6 Subjects</span>
+        </div>
+
+        <div class="subject-row">
+          <div class="subj-info">
+            <span class="subj-name">Data Structures & Algo</span>
+            <span class="subj-meta">18/20 classes · Prof. Sharma</span>
+          </div>
+          <div class="subj-bar-wrap">
+            <div class="subj-bar bar-green" style="width:90%"></div>
+          </div>
+          <span class="subj-pct pct-green">90%</span>
+          <span class="badge safe">Safe ✓</span>
+        </div>
+
+        <div class="subject-row">
+          <div class="subj-info">
+            <span class="subj-name">Operating Systems</span>
+            <span class="subj-meta">16/19 classes · Prof. Verma</span>
+          </div>
+          <div class="subj-bar-wrap">
+            <div class="subj-bar bar-green" style="width:84%"></div>
+          </div>
+          <span class="subj-pct pct-green">84%</span>
+          <span class="badge safe">Safe ✓</span>
+        </div>
+
+        <div class="subject-row">
+          <div class="subj-info">
+            <span class="subj-name">DBMS</span>
+            <span class="subj-meta">15/18 classes · Prof. Gupta</span>
+          </div>
+          <div class="subj-bar-wrap">
+            <div class="subj-bar bar-green" style="width:83%"></div>
+          </div>
+          <span class="subj-pct pct-green">83%</span>
+          <span class="badge safe">Safe ✓</span>
+        </div>
+
+        <div class="subject-row">
+          <div class="subj-info">
+            <span class="subj-name">Computer Networks</span>
+            <span class="subj-meta">12/17 classes · Prof. Singh</span>
+          </div>
+          <div class="subj-bar-wrap">
+            <div class="subj-bar bar-yellow" style="width:70%"></div>
+          </div>
+          <span class="subj-pct pct-yellow">70%</span>
+          <span class="badge warn">⚠ Low</span>
+        </div>
+
+        <div class="subject-row">
+          <div class="subj-info">
+            <span class="subj-name">Mathematics III</span>
+            <span class="subj-meta">10/16 classes · Prof. Rao</span>
+          </div>
+          <div class="subj-bar-wrap">
+            <div class="subj-bar bar-yellow" style="width:62%"></div>
+          </div>
+          <span class="subj-pct pct-yellow">62%</span>
+          <span class="badge warn">⚠ Low</span>
+        </div>
+
+        <div class="subject-row">
+          <div class="subj-info">
+            <span class="subj-name">Software Engineering</span>
+            <span class="subj-meta">8/10 classes · Prof. Joshi</span>
+          </div>
+          <div class="subj-bar-wrap">
+            <div class="subj-bar bar-red" style="width:55%"></div>
+          </div>
+          <span class="subj-pct pct-red">55%</span>
+          <span class="badge danger">🚨 Risk</span>
+        </div>
+      </div>
+
+      <!-- MARK ATTENDANCE -->
+      <div class="card mark-card">
+        <div class="card-head">
+          <h3>✏️ Mark Today's Attendance</h3>
+          <span id="todayDate">Loading...</span>
+        </div>
+        <div class="mark-body">
+          <div class="date-row">
+            <button class="date-chip active">Today</button>
+            <button class="date-chip">Yesterday</button>
+            <button class="date-chip">Custom</button>
+          </div>
+          <span class="today-label">Mark your classes for today</span>
+          <div class="att-subject-list">
+            <div class="att-row">
+              <span class="att-sname">DSA</span>
+              <div class="att-toggle">
+                <button class="att-btn present" onclick="toggle(this,'present')">P</button>
+                <button class="att-btn absent" onclick="toggle(this,'absent')">A</button>
+              </div>
+            </div>
+            <div class="att-row">
+              <span class="att-sname">OS</span>
+              <div class="att-toggle">
+                <button class="att-btn present" onclick="toggle(this,'present')">P</button>
+                <button class="att-btn absent" onclick="toggle(this,'absent')">A</button>
+              </div>
+            </div>
+            <div class="att-row">
+              <span class="att-sname">DBMS</span>
+              <div class="att-toggle">
+                <button class="att-btn present" onclick="toggle(this,'present')">P</button>
+                <button class="att-btn absent" onclick="toggle(this,'absent')">A</button>
+              </div>
+            </div>
+            <div class="att-row">
+              <span class="att-sname">CN</span>
+              <div class="att-toggle">
+                <button class="att-btn present" onclick="toggle(this,'present')">P</button>
+                <button class="att-btn absent" onclick="toggle(this,'absent')">A</button>
+              </div>
+            </div>
+            <div class="att-row">
+              <span class="att-sname">Maths III</span>
+              <div class="att-toggle">
+                <button class="att-btn present" onclick="toggle(this,'present')">P</button>
+                <button class="att-btn absent" onclick="toggle(this,'absent')">A</button>
+              </div>
+            </div>
+            <div class="att-row">
+              <span class="att-sname">SE</span>
+              <div class="att-toggle">
+                <button class="att-btn present" onclick="toggle(this,'present')">P</button>
+                <button class="att-btn absent" onclick="toggle(this,'absent')">A</button>
+              </div>
+            </div>
+          </div>
+          <button class="save-btn" onclick="saveAtt()">💾 Save Attendance</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="sec-label">Monthly View</div>
+    <div class="card calendar-card">
+      <div class="card-head">
+        <h3>📅 Attendance Calendar</h3>
+        <span>June 2026</span>
+      </div>
+      <div class="cal-body">
+        <div class="cal-nav">
+          <button class="cal-arrow" onclick="prevMonth()">&#8249;</button>
+          <span class="month" id="calMonth">June 2026</span>
+          <button class="cal-arrow" onclick="nextMonth()">&#8250;</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--green)"></div> Present
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--red)"></div> Absent
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--yellow)"></div> Holiday
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--purple2)"></div> Today
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTS + MINI STAT -->
+    <div class="sec-label">Alerts & Insights</div>
+    <div class="alerts-row">
+      <div class="alert-card">
+        <div class="card-head"
+          style="border-bottom:1px solid var(--border); margin:-1px -1px 0; padding:16px 22px 14px;">
+          <h3>🔔 Smart Alerts</h3>
+        </div>
+        <div style="padding:8px 6px;">
+          <div class="alert-item">
+            <div class="alert-icon red">🚨</div>
+            <div class="alert-text">
+              <strong>Software Engg — Critical (55%)</strong>
+              <span>You need to attend next 8 consecutive classes to reach 75%</span>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-icon yellow">⚠️</div>
+            <div class="alert-text">
+              <strong>Maths III — Warning (62%)</strong>
+              <span>Miss 1 more class and you'll be below 60% — attend 5 classes to recover</span>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-icon yellow">⚠️</div>
+            <div class="alert-text">
+              <strong>Computer Networks — Borderline (70%)</strong>
+              <span>Attend next 3 classes without a miss to stay safe above 75%</span>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-icon green">🎉</div>
+            <div class="alert-text">
+              <strong>DSA — Excellent (90%)</strong>
+              <span>You can safely miss 3 more classes and still be at 75%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>📊 Semester Progress</h3>
+          <span>Week 9/18</span>
+        </div>
+        <div class="ring-wrap">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="56" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="12" />
+            <circle cx="70" cy="70" r="56" fill="none" stroke="url(#rg)" stroke-width="12" stroke-linecap="round"
+              stroke-dasharray="351.86" stroke-dashoffset="63.33" transform="rotate(-90 70 70)" />
+            <defs>
+              <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#7c3aed" />
+                <stop offset="100%" stop-color="#22c55e" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div style="margin-top:-100px; text-align:center; position:relative; z-index:1; pointer-events:none;">
+            <div class="ring-num">82%</div>
+            <div class="ring-label">Overall</div>
+          </div>
+          <div style="margin-top:60px;"></div>
+          <div class="ring-sub">You're above the required 75% threshold 🎯</div>
+        </div>
+        <div style="padding:0 22px 20px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;">
+            <span style="color:var(--muted)">Classes completed</span>
+            <span style="font-weight:600;">46 / 91</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;">
+            <span style="color:var(--muted)">Weeks remaining</span>
+            <span style="font-weight:600;">9 weeks</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;">
+            <span style="color:var(--muted)">Bunks remaining (safe)</span>
+            <span style="font-weight:600;color:var(--green);">7 bunks</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <script>
+    /* ─── TODAY DATE ─── */
+    const today = new Date();
+    document.getElementById('todayDate').textContent =
+      today.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    /* ─── TOGGLE PRESENT/ABSENT ─── */
+    function toggle(btn, type) {
+      const wrap = btn.closest('.att-toggle');
+      wrap.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    /* ─── DATE CHIPS ─── */
+    document.querySelectorAll('.date-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+
+    /* ─── SAVE ATTENDANCE ─── */
+    function saveAtt() {
+      const btn = document.querySelector('.save-btn');
+      btn.textContent = '✅ Saved!';
+      btn.style.background = 'linear-gradient(135deg, #16a34a, #22c55e)';
+      setTimeout(() => {
+        btn.textContent = '💾 Save Attendance';
+        btn.style.background = '';
+      }, 2000);
+    }
+
+    /* ─── CALENDAR ─── */
+    let calYear = 2026, calMonth = 5; // June = 5
+
+    const PRESENT_DAYS = [2, 3, 4, 5, 9, 10, 11, 12, 16, 17, 18, 19, 23, 24, 25];
+    const ABSENT_DAYS = [6, 13, 20, 26];
+    const HOLIDAY_DAYS = [1, 7, 14, 21];
+    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+
+    function buildCal() {
+      const grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+      document.getElementById('calMonth').textContent = MONTHS[calMonth] + ' ' + calYear;
+
+      DAYS.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-day-label';
+        el.textContent = d;
+        grid.appendChild(el);
+      });
+
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      for (let i = 0; i < firstDay; i++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day empty';
+        grid.appendChild(el);
+      }
+
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const todayD = new Date();
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day';
+        el.textContent = d;
+
+        const isToday = (d === todayD.getDate() && calMonth === todayD.getMonth() && calYear === todayD.getFullYear());
+        if (isToday) el.classList.add('today');
+        else if (PRESENT_DAYS.includes(d)) { el.classList.add('present'); const dot = document.createElement('div'); dot.className = 'dot'; el.appendChild(dot); }
+        else if (ABSENT_DAYS.includes(d)) { el.classList.add('absent'); const dot = document.createElement('div'); dot.className = 'dot'; el.appendChild(dot); }
+        else if (HOLIDAY_DAYS.includes(d)) el.classList.add('holiday');
+
+        grid.appendChild(el);
+      }
+    }
+
+    function prevMonth() {
+      calMonth--;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      buildCal();
+    }
+    function nextMonth() {
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      buildCal();
+    }
+
+    buildCal();
+  </script>
+</body>
+
+</html>

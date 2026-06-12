@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>CampusFlow Ai - Make Campus Life easy with Ai</title>
+    <!--<link rel="stylesheet" href="assets/css/style.css" />-->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- ========== NAVBAR ========== -->
+    <header class="navbar">
+        <div class="container nav-content">
+
+            <!-- LEFT -->
+            <div class="nav-left">
+                <div class="menu-icon" onclick="openMenu()">☰</div>
+
+                <div class="logo">
+                    <!-- Text logo, later yahan image laga sakta hai -->
+                    <span class="logo-icon">🎓</span>
+                    <span class="logo-text">CampusFlow Ai</span>
+                </div>
+            </div>
+
+
+            <!-- RIGHT -->
+            <div class="nav-right">
+                <nav class="nav-links nav-right">
+                    <a href="/AI/ai.html">Ai Mentor</a>
+                    <a href="/Attendance/attendance.html">Attendance</a>
+                    <a href="/notes/notes.html">Notes Summarizer</a>
+                    <a href="/Assignment/assignment_track.html">Assignment Reminder</a>
+                    <a href="/roadmap/index.html">Placement Roadmap</a>
+                    <a href="/about_us/index.html">About Us</a>
+                    <a href="/login_page/login.html" class="btn-outline nav-login">Login</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- OVERLAY -->
+    <div id="overlay" onclick="closeMenu()"></div>
+
+
+
+
+    <!-- ========== HERO SECTION ========== -->
+    <section id="hero" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-text">
+                <h1>One Platform. Endless Posibilities</h1>
+                <p>
+                    Everything you need to stay organized, study smarter, and achieve your academic goals🚀
+                </p>
+                <div class="hero-buttons">
+                    <a href="/AI/ai.html" class="btn-primary">Explore AI</a>
+                    <a href="/roadmap/index.html" class="btn-secondary">Explore Roadmap</a>
+                </div>
+                <p class="hero-mini">
+                    Designed for the future of learning 🚀
+                </p>
+            </div>
+
+            <div class="hero-visual">
+                <div class="dashboard-card">
+                    <h3>CampusFlow Insight</h3>
+                    <ul>
+                        <li>"Consistency beats talent</li>
+                        <li> when talent doesn't stay consistent."</li>
+                    </ul>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== COURSES SECTION ========== -->
+    <section id="courses" class="section">
+        <div class="container">
+            <h2 class="section-title">Choose Your Course</h2>
+            <p class="section-subtitle">
+                Start with your program and drill down to semesters and subjects.
+            </p>
+
+            <div class="card-grid two">
+                <article class="card course-card">
+                    <h3>📚 Smart Notes</h3>
+                    <p>Convert lengthy notes into concise summaries and revise faster with AI-powered insights.</p>
+                    <a href="/notes/notes.html" class="card-link">Start Smart Notes →</a>
+                </article>
+
+                <article class="card course-card">
+                    <h3>📅 Attendance Tracker</h3>
+                    <p>Organized content for every semester, optimized for exams.</p>
+                    <a href="/Attendance/attendance.html" class="card-link">Access Attendance Tracker →</a>
+                </article>
+
+                <article class="card course-card">
+                    <h3>⏰ Assignment Reminder</h3>
+                    <p>Stay on top of deadlines with smart reminders and task management.</p>
+                    <a href="/Assignment/assignment_track.html" class="card-link">View Assignment Reminder →</a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== RESOURCES SECTION ========== -->
+    <section id="resources" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Study Resources</h2>
+            <p class="section-subtitle">
+                Everything you need in one place – no random Google hunt.
+            </p>
+
+            <div class="card-grid four">
+                <article class="card resource-card">
+                    <h3>AI Mentor</h3>
+                    <p>Get personalized guidance and insights to enhance your learning experience.</p>
+                    <span class="tag"><a href="/AI/ai.html">Explore AI</a></span>
+                </article>
+
+                <article class="card resource-card">
+                    <h3>Modules / Notes</h3>
+                    <p>Clean, exam-oriented notes for every unit and chapter.</p>
+                    <span class="tag"><a href="/notes/notes.html">Notes</a></span>
+                </article>
+
+                <article class="card resource-card">
+                    <h3>Assignment Reminder</h3>
+                    <p>Stay on top of deadlines with smart reminders and task management.</p>
+                    <span class="tag"><a href="/Assignment/assignment_track.html">Assignment</a></span>
+                </article>
+
+                <article class="card resource-card coming-soon">
+                    <h3>Placement Roadmap</h3>
+                    <p>Plan your career path and prepare for job applications with our comprehensive roadmap.</p>
+                    <span class="tag"><a href="/roadmap/index.html">Roadmap</a></span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SEARCH SECTION ========== -->
+    <!--
+    <section id="search" class="section">
+        <div class="container">
+            <h2 class="section-title">Find What You Need Fast</h2>
+            <p class="section-subtitle">
+                Filter by course, semester, subject and year to jump straight into the right PDF.
+            </p>
+
+            <form class="search-form">
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="course">Course</label>
+                        <select id="course">
+                            <option value="">Select course</option>
+                            <option value="bca">BCA</option>
+                            <option value="bba">BBA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="semester">Semester</label>
+                        <select id="semester">
+                            <option value="">Select semester</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="subject">Subject</label>
+                        <input id="subject" type="text" placeholder="e.g., C Programming" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="year">Year</label>
+                        <select id="year">
+                            <option value="">Any year</option>
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                            <option>2021</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary search-btn">
+                    Search Resources
+                </button>
+            </form>
+        </div>
+    </section>
+-->
+    <!-- ========== POPULAR SUBJECTS SECTION ========== -->
+    <section id="subjects" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Popular Subjects</h2>
+            <p class="section-subtitle">
+                Quick access to subjects most students search right before exams.
+            </p>
+
+            <div class="subject-chips">
+                <button>C Programming</button>
+                <button>DBMS</button>
+                <button>Operating Systems</button>
+                <button>Accounting</button>
+                <button>Principles of Management</button>
+                <button>Business Communication</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div>
+                <h3>CampusFlow AI</h3>
+                <p>Designed for the future of learning 🚀</p>
+            </div>
+
+            <div>
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/AI/ai.html">Ai Mentor</a></li>
+                    <li><a href="/Attendance/attendance.html">Attendance</a></li>
+                    <li><a href="/notes/notes.html">Notes Summarizer</a></li>
+                    <li><a href="/Assignment/assignment_track.html">Assignment Reminder</a></li>
+                    <li><a href="/roadmap/index.html">Placement Roadmap</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Feedback</a></li>
+                    <li><a href="#">Telegram (coming soon)</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 CampusFlow AI • Make Campus Life easy with Ai 🔥
+        </div>
+    </footer>
+</body>
+
+</html>

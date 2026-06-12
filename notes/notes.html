@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Notes Summarizer — CampusFlow AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --navy:       #07112B;
+  --navy-mid:   #0D1B3E;
+  --navy-light: #142050;
+  --purple:     #A855F7;
+  --purple-dim: #7C3AED;
+  --violet:     #6D28D9;
+  --glow:       rgba(168,85,247,.18);
+  --glow-str:   rgba(168,85,247,.32);
+  --text:       #E2E8F0;
+  --text-muted: #94A3B8;
+  --border:     rgba(168,85,247,.15);
+  --glass:      rgba(13,27,62,.6);
+  --radius:     16px;
+  --radius-lg:  24px;
+  --fd:         'Syne',sans-serif;
+  --fb:         'Inter',sans-serif;
+  --ease:       .38s cubic-bezier(.4,0,.2,1);
+}
+
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--navy);color:var(--text);overflow-x:hidden;line-height:1.6}
+
+/* noise */
+body::before{content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0}
+
+/* ── NAV ─────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1.5rem,5vw,4rem);height:66px;
+  background:rgba(7,17,43,.82);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);transition:background var(--ease)
+}
+.nav-logo{font-family:var(--fd);font-size:1.2rem;font-weight:800;text-decoration:none;
+  background:linear-gradient(135deg,#fff 30%,var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--text-muted);text-decoration:none;transition:color var(--ease)}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-cta{padding:.5rem 1.25rem;background:linear-gradient(135deg,var(--purple-dim),var(--purple));
+  border:none;border-radius:8px;font-family:var(--fb);font-size:.875rem;font-weight:600;
+  color:#fff;cursor:pointer;text-decoration:none;transition:opacity var(--ease),transform var(--ease)}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px)}
+.nav-ham{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer}
+
+/* ── HELPERS ─────────────────────────────────────── */
+section{position:relative;z-index:1}
+.container{max-width:1180px;margin:0 auto;padding:0 clamp(1.5rem,5vw,3rem)}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--purple);
+  background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.22);
+  border-radius:100px;padding:.32rem .9rem;margin-bottom:1.25rem}
+.eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--purple)}
+.section-header{text-align:center;margin-bottom:4rem}
+.section-header h2{font-family:var(--fd);font-size:clamp(2rem,4vw,3rem);font-weight:800;
+  line-height:1.15;margin-bottom:.75rem}
+.section-header p{color:var(--text-muted);font-size:1.05rem;max-width:540px;margin:0 auto}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+.btn-primary{padding:.85rem 2rem;
+  background:linear-gradient(135deg,var(--violet),var(--purple));
+  border:none;border-radius:10px;font-family:var(--fb);font-size:1rem;font-weight:600;
+  color:#fff;cursor:pointer;text-decoration:none;
+  box-shadow:0 0 28px var(--glow-str);transition:transform var(--ease),box-shadow var(--ease)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 48px var(--glow-str)}
+.btn-ghost{padding:.85rem 2rem;background:transparent;border:1px solid var(--border);
+  border-radius:10px;font-family:var(--fb);font-size:1rem;font-weight:500;
+  color:var(--text);cursor:pointer;text-decoration:none;backdrop-filter:blur(6px);
+  transition:border-color var(--ease),background var(--ease),transform var(--ease)}
+.btn-ghost:hover{border-color:var(--purple);background:var(--glow);transform:translateY(-2px)}
+.reveal{opacity:0;transform:translateY(32px);
+  transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.stag>*{opacity:0;transform:translateY(22px);
+  transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1)}
+.stag.in>*:nth-child(1){opacity:1;transform:none;transition-delay:.05s}
+.stag.in>*:nth-child(2){opacity:1;transform:none;transition-delay:.15s}
+.stag.in>*:nth-child(3){opacity:1;transform:none;transition-delay:.25s}
+.stag.in>*:nth-child(4){opacity:1;transform:none;transition-delay:.35s}
+.stag.in>*:nth-child(5){opacity:1;transform:none;transition-delay:.45s}
+.stag.in>*:nth-child(6){opacity:1;transform:none;transition-delay:.55s}
+
+/* ── HERO ─────────────────────────────────────────── */
+#hero{min-height:100svh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:100px clamp(1.5rem,5vw,3rem) 80px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(109,40,217,.45) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 50% at 85% 80%,rgba(168,85,247,.2) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 10% 90%,rgba(109,40,217,.15) 0%,transparent 60%),
+    var(--navy);
+  animation:gradShift 14s ease-in-out infinite alternate}
+@keyframes gradShift{to{filter:brightness(1.07) hue-rotate(6deg)}}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;
+  animation:orbFloat 8s ease-in-out infinite alternate}
+.o1{width:400px;height:400px;top:-80px;left:-100px;background:rgba(109,40,217,.22)}
+.o2{width:300px;height:300px;top:45%;right:-60px;background:rgba(168,85,247,.17);animation-delay:-4s}
+.o3{width:250px;height:250px;bottom:-40px;left:38%;background:rgba(124,58,237,.19);animation-delay:-2s}
+@keyframes orbFloat{to{transform:translateY(-44px) scale(1.06)}}
+.hero-content{position:relative;z-index:2;max-width:840px}
+/* animated typing bar */
+.hero-badge{display:inline-flex;align-items:center;gap:.6rem;
+  padding:.45rem 1.1rem;border-radius:100px;
+  background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);
+  font-size:.8rem;font-weight:600;color:var(--purple);margin-bottom:1.5rem;letter-spacing:.06em}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);
+  animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(168,85,247,.6)}50%{box-shadow:0 0 0 6px rgba(168,85,247,0)}}
+.hero-title{font-family:var(--fd);font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;
+  line-height:1.08;letter-spacing:-.02em;margin-bottom:1.5rem;
+  background:linear-gradient(160deg,#fff 40%,var(--purple) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--text-muted);
+  max-width:620px;margin:0 auto 2.5rem;line-height:1.75}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+/* floating doc preview */
+/*
+.hero-doc{position:absolute;bottom:-50px;left:50%;transform:translateX(-50%);
+  z-index:2;width:min(640px,90vw);
+  background:var(--glass);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:1.5rem;pointer-events:none;opacity:0;
+  animation:docRise 1.1s .8s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes docRise{to{opacity:1;bottom:-20px}}
+.doc-bar{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+.doc-dot{width:10px;height:10px;border-radius:50%}
+.doc-lines{display:flex;flex-direction:column;gap:.5rem}
+.doc-line{height:9px;border-radius:4px;background:rgba(148,163,184,.12)}
+.doc-line.w100{width:100%} .doc-line.w85{width:85%} .doc-line.w70{width:70%}
+.doc-line.w50{width:50%} .doc-line.w90{width:90%}
+.doc-line.purple{background:rgba(168,85,247,.3)}
+
+/* ── INTERFACE ─────────────────────────────────────── */
+#interface{padding:140px 0 100px}
+.iface-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:1.5rem;align-items:start}
+
+/* upload panel */
+.upload-panel{background:var(--glass);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;
+  display:flex;flex-direction:column;gap:1.25rem}
+.upload-panel-header{display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:.95rem;font-weight:700;color:var(--text)}
+.panel-badge{font-size:.7rem;padding:.2rem .65rem;border-radius:100px;
+  background:rgba(168,85,247,.15);color:var(--purple);border:1px solid rgba(168,85,247,.2)}
+
+.dropzone{
+  border:2px dashed rgba(168,85,247,.3);border-radius:var(--radius);
+  padding:3rem 2rem;text-align:center;cursor:pointer;
+  background:rgba(168,85,247,.03);
+  transition:border-color var(--ease),background var(--ease);
+  position:relative;overflow:hidden}
+.dropzone:hover,.dropzone.drag-over{
+  border-color:var(--purple);background:rgba(168,85,247,.08)}
+.dropzone::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,rgba(168,85,247,.06),transparent 70%);
+  pointer-events:none}
+.dz-icon{font-size:2.5rem;margin-bottom:.75rem;display:block}
+.dz-title{font-size:1rem;font-weight:700;margin-bottom:.35rem}
+.dz-sub{font-size:.82rem;color:var(--text-muted);margin-bottom:1.25rem}
+.dz-types{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.file-tag{font-size:.7rem;font-weight:600;padding:.25rem .65rem;border-radius:6px;
+  background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.2);color:var(--purple)}
+#file-input{display:none}
+.upload-btn{display:inline-flex;align-items:center;gap:.5rem;
+  margin-top:1rem;padding:.6rem 1.4rem;
+  background:linear-gradient(135deg,var(--violet),var(--purple));
+  border:none;border-radius:8px;font-size:.875rem;font-weight:600;
+  color:#fff;cursor:pointer;transition:opacity var(--ease),transform var(--ease)}
+.upload-btn:hover{opacity:.85;transform:translateY(-1px)}
+
+.recent-files{display:flex;flex-direction:column;gap:.6rem}
+.rfile{display:flex;align-items:center;gap:.75rem;
+  padding:.75rem 1rem;border-radius:10px;
+  background:rgba(168,85,247,.05);border:1px solid var(--border);
+  cursor:pointer;transition:border-color var(--ease),background var(--ease)}
+.rfile:hover{border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.1)}
+.rfile-icon{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;
+  font-size:1rem;flex-shrink:0}
+.rfile-info{flex:1;min-width:0}
+.rfile-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rfile-meta{font-size:.72rem;color:var(--text-muted)}
+.rfile-size{font-size:.75rem;color:var(--text-muted);flex-shrink:0}
+
+/* progress bar */
+.progress-wrap{display:none;flex-direction:column;gap:.5rem}
+.progress-wrap.active{display:flex}
+.prog-label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text-muted)}
+.prog-track{height:4px;background:rgba(168,85,247,.15);border-radius:2px;overflow:hidden}
+.prog-bar{height:100%;width:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--violet),var(--purple));
+  transition:width 2s cubic-bezier(.4,0,.2,1)}
+
+/* summary panel */
+.summary-panel{display:flex;flex-direction:column;gap:1.25rem}
+
+.sum-card{background:var(--glass);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;
+  transition:border-color var(--ease),box-shadow var(--ease)}
+.sum-card:hover{border-color:rgba(168,85,247,.3);box-shadow:0 16px 48px rgba(109,40,217,.15)}
+
+.sum-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+.sum-card-title{display:flex;align-items:center;gap:.6rem;font-size:.9rem;font-weight:700}
+.sum-card-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:.9rem;
+  background:linear-gradient(135deg,rgba(109,40,217,.3),rgba(168,85,247,.15));
+  border:1px solid rgba(168,85,247,.2)}
+.sum-meta{font-size:.7rem;color:var(--text-muted);display:flex;align-items:center;gap:.3rem}
+.sum-dot{width:5px;height:5px;border-radius:50%;background:#22C55E}
+
+.sum-text{font-size:.9rem;color:var(--text-muted);line-height:1.75}
+.sum-text strong{color:var(--text);font-weight:600}
+
+.kp-list{display:flex;flex-direction:column;gap:.6rem}
+.kp-item{display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:var(--text-muted)}
+.kp-bullet{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));
+  display:grid;place-items:center;flex-shrink:0;margin-top:1px}
+.kp-bullet svg{width:9px;height:9px}
+
+.topics-wrap{display:flex;flex-wrap:wrap;gap:.5rem}
+.topic-chip{padding:.3rem .8rem;border-radius:100px;font-size:.75rem;font-weight:600;
+  background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);color:var(--purple);
+  cursor:default;transition:background var(--ease),transform var(--ease)}
+.topic-chip:hover{background:rgba(168,85,247,.2);transform:scale(1.04)}
+.topic-chip.green{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.2);color:#4ADE80}
+.topic-chip.blue{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2);color:#60A5FA}
+
+.revision-list{display:flex;flex-direction:column;gap:.5rem}
+.rev-item{display:flex;gap:.65rem;font-size:.855rem;padding:.65rem .9rem;
+  background:rgba(168,85,247,.05);border-radius:8px;border-left:2px solid var(--purple);
+  color:var(--text-muted)}
+.rev-num{color:var(--purple);font-weight:700;flex-shrink:0}
+
+/* ai indicator */
+.ai-typing{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--text-muted)}
+.typing-dots{display:flex;gap:3px}
+.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--purple);
+  animation:blink 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+
+/* ── FEATURES ─────────────────────────────────────── */
+#features{padding:100px 0}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+.feat-card{background:var(--glass);backdrop-filter:blur(16px);
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:2rem;position:relative;overflow:hidden;
+  transition:transform var(--ease),border-color var(--ease),box-shadow var(--ease)}
+.feat-card::before{content:'';position:absolute;top:-40%;right:-20%;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,85,247,.07),transparent 70%);
+  pointer-events:none}
+.feat-card:hover{transform:translateY(-5px);
+  border-color:rgba(168,85,247,.3);
+  box-shadow:0 20px 56px rgba(109,40,217,.18)}
+.feat-icon{width:52px;height:52px;border-radius:14px;margin-bottom:1.25rem;
+  background:linear-gradient(135deg,rgba(109,40,217,.3),rgba(168,85,247,.12));
+  border:1px solid rgba(168,85,247,.22);display:grid;place-items:center;
+  font-size:1.5rem;transition:transform var(--ease)}
+.feat-card:hover .feat-icon{transform:scale(1.1) rotate(-5deg)}
+.feat-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.55rem}
+.feat-card p{font-size:.875rem;color:var(--text-muted);line-height:1.7}
+
+/* ── STATS ────────────────────────────────────────── */
+#stats{padding:80px 0}
+.stats-inner{background:linear-gradient(135deg,rgba(109,40,217,.15),rgba(168,85,247,.06));
+  border:1px solid rgba(168,85,247,.25);border-radius:32px;
+  padding:4rem clamp(2rem,6vw,5rem);position:relative;overflow:hidden}
+.stats-inner::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(168,85,247,.12),transparent 70%);
+  pointer-events:none}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;position:relative;z-index:1}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--fd);font-size:clamp(2rem,3.5vw,3rem);font-weight:800;
+  background:linear-gradient(135deg,#fff 30%,var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.stat-label{font-size:.82rem;color:var(--text-muted);margin-top:.4rem;font-weight:500}
+.stat-sep{width:1px;background:var(--border);align-self:stretch;display:none}
+
+/* ── WORKFLOW ─────────────────────────────────────── */
+#workflow{padding:100px 0}
+.workflow-track{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:3rem}
+/* connector line */
+.workflow-track::before{content:'';position:absolute;top:36px;left:calc(12.5%);
+  right:calc(12.5%);height:2px;
+  background:linear-gradient(90deg,var(--violet),var(--purple));z-index:0;
+  clip-path:inset(0 0 0 0)} /* we'll animate via JS */
+.wf-step{text-align:center;position:relative;z-index:1;padding:0 1rem}
+.wf-circle{width:72px;height:72px;border-radius:50%;margin:0 auto 1.25rem;
+  background:var(--glass);backdrop-filter:blur(16px);
+  border:2px solid var(--border);
+  display:grid;place-items:center;font-size:1.5rem;position:relative;
+  transition:border-color var(--ease),box-shadow var(--ease)}
+.wf-circle.active{border-color:var(--purple);
+  box-shadow:0 0 0 6px rgba(168,85,247,.12),0 0 32px rgba(168,85,247,.25)}
+.wf-num{position:absolute;top:-4px;right:-4px;
+  width:20px;height:20px;border-radius:50%;
+  background:linear-gradient(135deg,var(--violet),var(--purple));
+  font-size:.65rem;font-weight:800;color:#fff;
+  display:grid;place-items:center;border:2px solid var(--navy)}
+.wf-step h4{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.wf-step p{font-size:.8rem;color:var(--text-muted);line-height:1.6}
+/* arrow between steps */
+.wf-arrow{position:absolute;top:24px;right:-12px;
+  color:var(--purple);font-size:.85rem;opacity:.5;display:none}
+
+/* ── AI PREVIEW ───────────────────────────────────── */
+#preview{padding:100px 0}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+.prev-card{background:var(--glass);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem}
+.prev-card-label{display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:1.25rem}
+.prev-card-label span{padding:.2rem .6rem;border-radius:5px;font-size:.68rem;
+  background:rgba(148,163,184,.1);color:var(--text-muted)}
+.orig-text{font-size:.875rem;color:var(--text-muted);line-height:1.8;
+  border-left:3px solid rgba(148,163,184,.2);padding-left:1rem}
+.sum-result-text{font-size:.9rem;color:var(--text);line-height:1.75;margin-bottom:1.25rem}
+.kpoints{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+.kp{display:flex;gap:.6rem;align-items:flex-start;font-size:.85rem;color:var(--text-muted)}
+.kp-icon{color:var(--purple);flex-shrink:0;margin-top:2px}
+.transform-arrow{display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;color:var(--purple);padding:1rem 0;grid-column:span 2;
+  display:none}
+
+/* comparison bar */
+.comparison{grid-column:span 2;
+  background:var(--glass);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem}
+.comp-bars{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.comp-bar-wrap{display:flex;flex-direction:column;gap:.4rem}
+.comp-bar-label{font-size:.78rem;color:var(--text-muted);display:flex;justify-content:space-between}
+.comp-track{height:8px;border-radius:4px;background:rgba(168,85,247,.1);overflow:hidden}
+.comp-fill{height:100%;border-radius:4px;width:0;transition:width 1.5s .3s cubic-bezier(.4,0,.2,1)}
+.comp-fill.long{background:rgba(148,163,184,.4);width:95%}
+.comp-fill.short{background:linear-gradient(90deg,var(--violet),var(--purple));width:18%}
+
+/* ── CTA ──────────────────────────────────────────── */
+#cta{padding:100px 0}
+.cta-box{background:linear-gradient(135deg,rgba(109,40,217,.2),rgba(168,85,247,.07));
+  border:1px solid rgba(168,85,247,.28);border-radius:32px;
+  padding:5rem clamp(2rem,6vw,5rem);text-align:center;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(ellipse 70% 80% at 50% 0%,rgba(168,85,247,.13),transparent 70%);
+  pointer-events:none}
+.cta-box h2{font-family:var(--fd);font-size:clamp(2rem,4vw,3.2rem);font-weight:800;
+  line-height:1.15;margin-bottom:.75rem;position:relative;z-index:1}
+.cta-box p{color:var(--text-muted);font-size:1.05rem;margin-bottom:2.5rem;position:relative;z-index:1}
+.cta-acts{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+
+/* ── FOOTER ───────────────────────────────────────── */
+footer{border-top:1px solid var(--border);
+  padding:3rem clamp(1.5rem,5vw,4rem) 2rem;position:relative;z-index:1}
+.ft-inner{max-width:1180px;margin:0 auto;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
+.ft-brand p{font-size:.85rem;color:var(--text-muted);line-height:1.7;
+  margin-top:.75rem;max-width:280px}
+.ft-col h4{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:1rem}
+.ft-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.ft-col ul a{font-size:.875rem;color:var(--text-muted);text-decoration:none;
+  transition:color var(--ease)}
+.ft-col ul a:hover{color:var(--text)}
+.ft-bottom{max-width:1180px;margin:2rem auto 0;padding-top:1.5rem;
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.8rem;color:var(--text-muted)}
+
+/* ── TOAST ────────────────────────────────────────── */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:999;
+  background:var(--navy-mid);border:1px solid rgba(168,85,247,.3);
+  border-radius:12px;padding:1rem 1.5rem;
+  display:flex;align-items:center;gap:.75rem;
+  transform:translateY(120%);opacity:0;
+  transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s}
+.toast.show{transform:none;opacity:1}
+.toast-icon{font-size:1.2rem}
+.toast-text{font-size:.875rem;font-weight:500}
+
+/* ── RESPONSIVE ───────────────────────────────────── */
+@media(max-width:1000px){
+  .iface-grid{grid-template-columns:1fr}
+  .preview-grid{grid-template-columns:1fr}
+  .comparison{grid-column:span 1}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .workflow-track{grid-template-columns:repeat(2,1fr);gap:1.5rem}
+  .workflow-track::before{display:none}
+  .feat-grid{grid-template-columns:1fr}
+  .ft-inner{grid-template-columns:1fr 1fr;gap:2rem}
+  .ft-brand{grid-column:span 2}
+}
+@media(max-width:640px){
+  .nav-links,.nav-cta{display:none}
+  .nav-ham{display:block}
+  nav.open .nav-links{
+    display:flex;flex-direction:column;
+    position:absolute;top:66px;left:0;right:0;
+    background:rgba(7,17,43,.97);backdrop-filter:blur(20px);
+    padding:1.5rem 2rem;border-bottom:1px solid var(--border);z-index:300}
+  nav.open .nav-links li a{font-size:1rem}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .workflow-track{grid-template-columns:1fr}
+  .hero-actions{flex-direction:column;align-items:center}
+  .cta-acts{flex-direction:column;align-items:center}
+  .ft-inner{grid-template-columns:1fr}
+  .ft-brand{grid-column:span 1}
+  .ft-bottom{flex-direction:column;gap:.5rem;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">CampusFlow AI</a>
+  <ul class="nav-links">
+    <li><a href="#interface">Summarizer</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#workflow">How It Works</a></li>
+    <li><a href="#preview" class="active">Preview</a></li>
+  </ul>
+  <a href="#interface" class="nav-cta">Start Summarizing</a>
+  <button class="nav-ham" onclick="document.getElementById('navbar').classList.toggle('open')">☰</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="badge-dot"></span>Powered by CampusFlow AI</div>
+    <h1 class="hero-title">AI Notes<br>Summarizer</h1>
+    <p class="hero-sub">Upload your notes and instantly get concise, easy-to-understand summaries powered by AI. From lengthy lectures to crisp flashcards in seconds.</p>
+    <div class="hero-actions">
+      <a href="#interface" class="btn-primary">Upload Notes</a>
+      <a href="#preview" class="btn-ghost">Try Demo</a>
+    </div>
+  </div>
+  
+  <!-- decorative doc preview -->
+   <!-->
+  <div class="hero-doc">
+    <div class="doc-bar">
+      <div class="doc-dot" style="background:#FF5F57"></div>
+      <div class="doc-dot" style="background:#FEBC2E"></div>
+      <div class="doc-dot" style="background:#28C840"></div>
+      <span style="font-size:.72rem;color:var(--text-muted);margin-left:.5rem">lecture_notes_unit4.pdf</span>
+    </div>
+    <div class="doc-lines">
+      <div class="doc-line w100"></div><div class="doc-line w85"></div>
+      <div class="doc-line w70"></div><div class="doc-line w100"></div>
+      <div class="doc-line w50 purple"></div>
+      <div class="doc-line w90"></div><div class="doc-line w85"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+-->
+
+<!-- MAIN INTERFACE -->
+<section id="interface">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Summarizer</span>
+      <h2>Drop in your notes.<br>Get back clarity.</h2>
+      <p>Upload any document and our AI reads, understands, and distills it into what actually matters.</p>
+    </div>
+
+    <div class="iface-grid reveal">
+      <!-- LEFT: Upload -->
+      <div class="upload-panel">
+        <div class="upload-panel-header">
+          <span class="panel-title">📂 Upload Notes</span>
+          <span class="panel-badge">Ready</span>
+        </div>
+
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+          <span class="dz-icon">📄</span>
+          <div class="dz-title">Drag & drop your file here</div>
+          <div class="dz-sub">or click to browse from your device</div>
+          <div class="dz-types">
+            <span class="file-tag">PDF</span>
+            <span class="file-tag">DOCX</span>
+            <span class="file-tag">TXT</span>
+            <span class="file-tag">MD</span>
+          </div>
+          <button class="upload-btn" onclick="event.stopPropagation();document.getElementById('file-input').click()">
+            ↑ Choose File
+          </button>
+        </div>
+        <input type="file" id="file-input" accept=".pdf,.docx,.txt,.md"/>
+
+        <!-- progress -->
+        <div class="progress-wrap" id="progress-wrap">
+          <div class="prog-label"><span id="prog-filename">Processing…</span><span id="prog-pct">0%</span></div>
+          <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
+        </div>
+
+        <!-- recent files -->
+        <div style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Recent Files</div>
+        <div class="recent-files">
+          <div class="rfile" onclick="simulateSummarize('Data Structures - Lecture 7')">
+            <div class="rfile-icon" style="background:rgba(239,68,68,.12);color:#F87171">📄</div>
+            <div class="rfile-info">
+              <div class="rfile-name">Data Structures – Lecture 7</div>
+              <div class="rfile-meta">PDF · 3 days ago</div>
+            </div>
+            <div class="rfile-size">1.2 MB</div>
+          </div>
+          <div class="rfile" onclick="simulateSummarize('Operating Systems Unit 3')">
+            <div class="rfile-icon" style="background:rgba(59,130,246,.12);color:#60A5FA">📘</div>
+            <div class="rfile-info">
+              <div class="rfile-name">Operating Systems – Unit 3</div>
+              <div class="rfile-meta">DOCX · 1 week ago</div>
+            </div>
+            <div class="rfile-size">847 KB</div>
+          </div>
+          <div class="rfile" onclick="simulateSummarize('DBMS Quick Notes')">
+            <div class="rfile-icon" style="background:rgba(168,85,247,.12);color:var(--purple)">📝</div>
+            <div class="rfile-info">
+              <div class="rfile-name">DBMS Quick Notes</div>
+              <div class="rfile-meta">TXT · 2 weeks ago</div>
+            </div>
+            <div class="rfile-size">124 KB</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Summary output -->
+      <div class="summary-panel" id="summary-panel">
+        <!-- AI Summary -->
+        <div class="sum-card">
+          <div class="sum-card-header">
+            <div class="sum-card-title"><div class="sum-card-icon">🧠</div>AI Summary</div>
+            <div class="sum-meta"><div class="sum-dot"></div>Generated just now</div>
+          </div>
+          <p class="sum-text" id="sum-text">
+            <strong>Data Structures – Lecture 7: Trees & Graphs</strong><br><br>
+            Trees are hierarchical data structures with a root node and child nodes connected by edges. A <strong>Binary Search Tree (BST)</strong> ensures the left subtree contains nodes with smaller values and the right with larger, enabling O(log n) search. <strong>Graph traversal</strong> algorithms — BFS and DFS — differ in exploration strategy: BFS uses a queue (level-by-level), DFS uses a stack (depth-first). Time complexity for both is O(V + E) for adjacency lists.
+          </p>
+        </div>
+
+        <!-- Key Points -->
+        <div class="sum-card">
+          <div class="sum-card-header">
+            <div class="sum-card-title"><div class="sum-card-icon">🎯</div>Key Points</div>
+            <div class="ai-typing"><div class="typing-dots"><span></span><span></span><span></span></div>AI identified 5 points</div>
+          </div>
+          <ul class="kp-list" id="kp-list">
+            <li class="kp-item"><div class="kp-bullet"><svg viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2 2L8 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>BST property: left &lt; root &lt; right at every node level</li>
+            <li class="kp-item"><div class="kp-bullet"><svg viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2 2L8 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>BFS uses a Queue; explores nodes level by level (shortest path)</li>
+            <li class="kp-item"><div class="kp-bullet"><svg viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2 2L8 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>DFS uses a Stack (or recursion); explores full depth before backtracking</li>
+            <li class="kp-item"><div class="kp-bullet"><svg viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2 2L8 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Graph complexity: O(V+E) with adjacency list, O(V²) with matrix</li>
+            <li class="kp-item"><div class="kp-bullet"><svg viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2 2L8 1" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>AVL trees maintain balance factor −1 to +1 via rotations</li>
+          </ul>
+        </div>
+
+        <!-- Important Topics -->
+        <div class="sum-card">
+          <div class="sum-card-header">
+            <div class="sum-card-title"><div class="sum-card-icon">🔖</div>Important Topics</div>
+          </div>
+          <div class="topics-wrap" id="topics-wrap">
+            <span class="topic-chip">Binary Search Tree</span>
+            <span class="topic-chip">BFS / DFS</span>
+            <span class="topic-chip green">AVL Tree</span>
+            <span class="topic-chip green">Dijkstra's Algorithm</span>
+            <span class="topic-chip blue">Graph Representation</span>
+            <span class="topic-chip blue">Tree Traversal</span>
+            <span class="topic-chip">Heap</span>
+            <span class="topic-chip green">Time Complexity</span>
+          </div>
+        </div>
+
+        <!-- Quick Revision -->
+        <div class="sum-card">
+          <div class="sum-card-header">
+            <div class="sum-card-title"><div class="sum-card-icon">⚡</div>Quick Revision Notes</div>
+          </div>
+          <div class="revision-list" id="revision-list">
+            <div class="rev-item"><span class="rev-num">1.</span>BST search = O(log n) average, O(n) worst case (unbalanced)</div>
+            <div class="rev-item"><span class="rev-num">2.</span>BFS → shortest path in unweighted graphs. DFS → cycle detection, topological sort</div>
+            <div class="rev-item"><span class="rev-num">3.</span>Inorder traversal of BST yields a sorted sequence</div>
+            <div class="rev-item"><span class="rev-num">4.</span>Minimum Spanning Tree: Prim's (greedy) / Kruskal's (union-find)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Features</span>
+      <h2>Everything your notes<br>need to become useful</h2>
+      <p>Purpose-built for students who have more content to read than time allows.</p>
+    </div>
+    <div class="feat-grid stag">
+      <div class="feat-card">
+        <div class="feat-icon">📄</div>
+        <h3>Smart Note Summarization</h3>
+        <p>Extract the core ideas from any document instantly. Our AI reads context, not just words — so nothing important gets left on the cutting-room floor.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>Quick Revision Notes</h3>
+        <p>Get exam-ready in minutes. Each summary comes with numbered revision points designed for last-night cramming and morning reviews alike.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎯</div>
+        <h3>Important Topic Detection</h3>
+        <p>Our model flags which concepts appear most frequently in exam papers and academic syllabi — automatically surfacing what's actually worth memorizing.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🤖</div>
+        <h3>AI-Powered Analysis</h3>
+        <p>Beyond summaries — get concept maps, analogies, and plain-English explanations of dense technical content without asking follow-up questions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-inner reveal">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-num" data-target="95" data-suffix="%">0%</div>
+          <div class="stat-label">Faster Revision</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-target="1000" data-suffix="+">0+</div>
+          <div class="stat-label">Notes Processed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-target="100" data-suffix="%" data-prefix="AI ">0%</div>
+          <div class="stat-label">AI-Powered Learning</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-target="24" data-suffix="/7">0/7</div>
+          <div class="stat-label">Availability</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WORKFLOW -->
+<section id="workflow">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">How It Works</span>
+      <h2>From messy notes<br>to mastered content</h2>
+      <p>Four steps. Under thirty seconds. No learning curve.</p>
+    </div>
+    <div class="workflow-track stag">
+      <div class="wf-step">
+        <div class="wf-circle active">
+          📤<span class="wf-num">1</span>
+        </div>
+        <h4>Upload Notes</h4>
+        <p>Drop a PDF, DOCX, or TXT — anything from lecture slides to handwritten scans</p>
+      </div>
+      <div class="wf-step">
+        <div class="wf-circle active">
+          ⚙️<span class="wf-num">2</span>
+        </div>
+        <h4>AI Processing</h4>
+        <p>Our model reads the full context, identifies structure, and extracts meaning</p>
+      </div>
+      <div class="wf-step">
+        <div class="wf-circle active">
+          ✨<span class="wf-num">3</span>
+        </div>
+        <h4>Get Summary</h4>
+        <p>Receive a summary, key points, important topics, and quick revision cards</p>
+      </div>
+      <div class="wf-step">
+        <div class="wf-circle active">
+          🎓<span class="wf-num">4</span>
+        </div>
+        <h4>Revise Smarter</h4>
+        <p>Use your AI-generated notes to study efficiently, any time, on any device</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AI PREVIEW -->
+<section id="preview">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">Live Example</span>
+      <h2>See the transformation</h2>
+      <p>The same content — before and after CampusFlow AI.</p>
+    </div>
+    <div class="preview-grid reveal">
+      <div class="prev-card">
+        <div class="prev-card-label">
+          Original Notes <span>2,400 words · 8 min read</span>
+        </div>
+        <p class="orig-text">
+          The Operating System acts as an intermediary between users and the computer hardware. The primary purpose of an OS is to provide an environment in which a user can execute programs conveniently and efficiently. An OS is software that manages the computer hardware. The hardware must provide appropriate mechanisms to ensure the correct operation of the computer system and to prevent user programs from interfering with the proper operation of the system. Process scheduling is an essential part of a Multiprogramming operating system. Such operating systems allow more than one process to be loaded into the executable memory at a time and the loaded process shares the CPU using time multiplexing. The scheduler is the component that facilitates this by tracking processes and selecting which to run using algorithms like FCFS, SJF, Round Robin, and Priority Scheduling…
+          <br><br>
+          Memory management is the functionality of an operating system which handles or manages primary memory and moves processes back and forth between main memory and disk during execution. Memory management keeps track of each and every memory location, regardless of either it is allocated to some process or it is free. It checks how much memory is to be allocated to processes and when this memory is to be freed or reallocated…
+        </p>
+      </div>
+      <div class="prev-card">
+        <div class="prev-card-label">
+          AI Summary <span style="color:var(--purple)">✦ 120 words · 30 sec read</span>
+        </div>
+        <p class="sum-result-text">
+          An <strong>OS bridges users and hardware</strong>, managing processes, memory, and resources. Process scheduling (FCFS, SJF, Round Robin, Priority) enables multiprogramming by time-sharing the CPU. Memory management allocates and tracks RAM dynamically, moving processes between main memory and disk as needed.
+        </p>
+        <div class="kpoints">
+          <div class="kp"><span class="kp-icon">▸</span>OS = resource manager + environment for program execution</div>
+          <div class="kp"><span class="kp-icon">▸</span>Scheduling algorithms determine CPU allocation order</div>
+          <div class="kp"><span class="kp-icon">▸</span>Memory manager tracks free vs. allocated blocks at runtime</div>
+          <div class="kp"><span class="kp-icon">▸</span>Paging & segmentation handle non-contiguous memory allocation</div>
+        </div>
+      </div>
+      <div class="comparison">
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:.75rem">Reading time comparison</div>
+        <div class="comp-bars">
+          <div class="comp-bar-wrap">
+            <div class="comp-bar-label"><span>Original notes</span><span>8 min</span></div>
+            <div class="comp-track"><div class="comp-fill long" id="bar-long"></div></div>
+          </div>
+          <div class="comp-bar-wrap">
+            <div class="comp-bar-label"><span>AI Summary</span><span style="color:var(--purple)">30 sec</span></div>
+            <div class="comp-track"><div class="comp-fill short" id="bar-short"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-box reveal">
+      <h2>Turn Hours of Reading<br>Into Minutes</h2>
+      <p>Join thousands of students who study smarter — not harder — with CampusFlow AI.</p>
+      <div class="cta-acts">
+        <a href="#interface" class="btn-primary">Start Summarizing</a>
+        <a href="#features" class="btn-ghost">Explore More Features</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-inner">
+    <div class="ft-brand">
+      <a href="#" class="nav-logo">CampusFlow AI</a>
+      <p>The all-in-one AI platform for students who want to stay organized, productive, and career-ready.</p>
+    </div>
+    <div class="ft-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Changelog</a></li>
+        <li><a href="#">Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Cookies</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <span>© 2025 CampusFlow AI. All rights reserved.</span>
+    <span>Made with ♥ for students everywhere</span>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✅</span>
+  <span class="toast-text" id="toast-text">File uploaded successfully!</span>
+</div>
+
+<script>
+/* ── Intersection observer ── */
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target) }
+  })
+},{threshold:.1})
+document.querySelectorAll('.reveal,.stag').forEach(el=>obs.observe(el))
+
+/* ── Navbar scroll ── */
+const nb=document.getElementById('navbar')
+window.addEventListener('scroll',()=>{
+  nb.style.background=window.scrollY>40?'rgba(7,17,43,.96)':'rgba(7,17,43,.82)'
+},{passive:true})
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>nb.classList.remove('open')))
+
+/* ── Drag & drop ── */
+const dz=document.getElementById('dropzone')
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')})
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'))
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.classList.remove('drag-over')
+  const f=e.dataTransfer.files[0];if(f) simulateSummarize(f.name)
+})
+document.getElementById('file-input').addEventListener('change',e=>{
+  const f=e.target.files[0];if(f) simulateSummarize(f.name)
+})
+
+/* ── Simulate summarize ── */
+function simulateSummarize(name){
+  const pw=document.getElementById('progress-wrap')
+  const pb=document.getElementById('prog-bar')
+  const pf=document.getElementById('prog-filename')
+  const pp=document.getElementById('prog-pct')
+  pw.classList.add('active')
+  pb.style.width='0%'; pf.textContent=name.length>28?name.slice(0,25)+'…':name
+  let p=0
+  const iv=setInterval(()=>{
+    p+=Math.random()*18+4
+    if(p>=100){p=100;clearInterval(iv);setTimeout(()=>{pw.classList.remove('active');showToast('✅','Summary generated for '+name)},400)}
+    pb.style.width=p+'%'; pp.textContent=Math.floor(p)+'%'
+  },180)
+}
+
+/* ── Toast ── */
+function showToast(icon,msg){
+  const t=document.getElementById('toast')
+  document.querySelector('.toast-icon').textContent=icon
+  document.getElementById('toast-text').textContent=msg
+  t.classList.add('show')
+  setTimeout(()=>t.classList.remove('show'),3500)
+}
+
+/* ── Counter animation ── */
+const counterObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return
+    const el=e.target
+    const target=+el.dataset.target
+    const suffix=el.dataset.suffix||''
+    const prefix=el.dataset.prefix||''
+    let cur=0; const dur=1800; const start=performance.now()
+    const tick=now=>{
+      const p=Math.min((now-start)/dur,1)
+      const eased=1-Math.pow(1-p,3)
+      cur=Math.floor(eased*target)
+      el.textContent=prefix+cur+suffix
+      if(p<1)requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+    counterObs.unobserve(el)
+  })
+},{threshold:.4})
+document.querySelectorAll('.stat-num[data-target]').forEach(el=>counterObs.observe(el))
+
+/* ── Comparison bars animate ── */
+const barObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return
+    document.getElementById('bar-long').style.width='95%'
+    document.getElementById('bar-short').style.width='18%'
+    barObs.disconnect()
+  })
+},{threshold:.4})
+const comp=document.querySelector('.comparison')
+if(comp) barObs.observe(comp)
+
+/* ── Tilt effect ── */
+if(window.matchMedia('(hover:hover)').matches){
+  document.querySelectorAll('.feat-card,.sum-card,.prev-card').forEach(c=>{
+    c.addEventListener('mousemove',e=>{
+      const r=c.getBoundingClientRect()
+      const x=(e.clientX-r.left)/r.width-.5
+      const y=(e.clientY-r.top)/r.height-.5
+      c.style.transform=`translateY(-5px) rotateY(${x*5}deg) rotateX(${-y*3}deg)`
+    })
+    c.addEventListener('mouseleave',()=>c.style.transform='')
+  })
+}
+</script>
+</body>
+</html>
