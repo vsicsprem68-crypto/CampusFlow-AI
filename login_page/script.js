@@ -1,3 +1,4 @@
+const API_BASE = "https://campusflow-ai-1.onrender.com";
 let isLogin = true;
 let showForgotPassword = false;
 let theme = localStorage.getItem('gradstack-theme') || 'light';
@@ -269,32 +270,37 @@ function delay(ms) {
 }
 
 async function handleLogin(formData) {
-    await delay(1000);
 
-    const user = mockUsers.find(u => u.email === formData.email);
+    const response = await fetch(
+        "https://campusflow-ai-1.onrender.com/api/login",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: formData.email,
+                password: formData.password
+            })
+        }
+    );
 
-    if (!user) {
-        throw new Error('User not found. Please sign up first.');
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message);
     }
 
-    if (user.password !== formData.password) {
-        throw new Error('Incorrect password. Please try again.');
-    }
+    showToast(
+        "Login Successful!",
+        data.message,
+        "success"
+    );
 
-    const rememberMe = document.getElementById('rememberMe').checked;
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem('gradstack_user', JSON.stringify({
-        id: user.id,
-        name: user.name,
-        email: user.email
-    }));
-
-    
-    showToast('Login Successful!', `Welcome back, ${user.name}!`, 'success');
-
-setTimeout(() => {
-    window.location.href = "../main_page/index.html";
-}, 1000);
+    setTimeout(() => {
+        window.location.href =
+            "../index.html";
+    }, 1000);
 }
 
 async function handleSignup(formData) {

@@ -1809,6 +1809,8 @@
   </div><!-- /shell -->
 
   <script>
+
+    const API_BASE = "https://campusflow-ai-1.onrender.com";
     /* ── THEME ─────────────────────────────────────────────────── */
     const html = document.documentElement;
     const savedTheme = localStorage.getItem('cf-theme') || 'dark';
@@ -2009,31 +2011,53 @@ while(left < right) {
     }
 
     /* ── SEND ──────────────────────────────────────────────────── */
-    function sendMessage() {
-      const text = msgInput.value.trim();
-      if (!text) return;
+    async function sendMessage() {
+  const text = msgInput.value.trim();
+  if (!text) return;
 
-      if (!chatActive) {
-        welcome.style.display = 'none';
-        chatArea.style.display = 'flex';
-        chatActive = true;
-      }
+  if (!chatActive) {
+    welcome.style.display = 'none';
+    chatArea.style.display = 'flex';
+    chatActive = true;
+  }
 
-      appendMessage('user', text);
-      msgInput.value = '';
-      autoResize(msgInput);
-      document.getElementById('sendBtn').disabled = true;
+  appendMessage('user', text);
+  msgInput.value = '';
+  autoResize(msgInput);
+  document.getElementById('sendBtn').disabled = true;
 
-      appendTyping();
+  appendTyping();
 
-      const delay = 1200 + Math.random() * 800;
-      setTimeout(() => {
-        removeTyping();
-        appendMessage('ai', getAIResponse(text));
-        document.getElementById('sendBtn').disabled = false;
-        msgInput.focus();
-      }, delay);
+  try {
+    const response = await fetch(`${API_BASE}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await response.json();
+
+    removeTyping();
+
+    if (!response.ok) {
+      appendMessage('ai', `<p>⚠️ ${data.error || 'Something went wrong'}</p>`);
+    } else {
+      // convert plain text reply into basic HTML paragraphs
+      const formatted = data.reply
+        .split('\n\n')
+        .map(p => `<p>${escHtml(p)}</p>`)
+        .join('');
+      appendMessage('ai', formatted);
     }
+
+  } catch (err) {
+    removeTyping();
+    appendMessage('ai', `<p>⚠️ Could not reach AI server. Try again.</p>`);
+  }
+
+  document.getElementById('sendBtn').disabled = false;
+  msgInput.focus();
+}
 
     function sendQuick(text) {
       msgInput.value = text;
@@ -2093,7 +2117,7 @@ while(left < right) {
 
     /* ── INIT ──────────────────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
-      initDemoChat();
+     // initDemoChat();
       msgInput.focus();
     });
   </script>

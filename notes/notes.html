@@ -828,6 +828,8 @@ footer{border-top:1px solid var(--border);
 </div>
 
 <script>
+
+  const API_BASE = "https://campusflow-ai-1.onrender.com";
 /* ── Intersection observer ── */
 const obs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{
@@ -855,20 +857,75 @@ document.getElementById('file-input').addEventListener('change',e=>{
   const f=e.target.files[0];if(f) simulateSummarize(f.name)
 })
 
-/* ── Simulate summarize ── */
-function simulateSummarize(name){
-  const pw=document.getElementById('progress-wrap')
-  const pb=document.getElementById('prog-bar')
-  const pf=document.getElementById('prog-filename')
-  const pp=document.getElementById('prog-pct')
-  pw.classList.add('active')
-  pb.style.width='0%'; pf.textContent=name.length>28?name.slice(0,25)+'…':name
-  let p=0
-  const iv=setInterval(()=>{
-    p+=Math.random()*18+4
-    if(p>=100){p=100;clearInterval(iv);setTimeout(()=>{pw.classList.remove('active');showToast('✅','Summary generated for '+name)},400)}
-    pb.style.width=p+'%'; pp.textContent=Math.floor(p)+'%'
-  },180)
+/* ── Notes Summarizer API ── */
+async function simulateSummarize(name){
+
+  const pw = document.getElementById('progress-wrap');
+  const pb = document.getElementById('prog-bar');
+  const pf = document.getElementById('prog-filename');
+  const pp = document.getElementById('prog-pct');
+
+  pw.classList.add('active');
+  pb.style.width = '0%';
+  pf.textContent = name.length > 28 ? name.slice(0,25) + '…' : name;
+
+  let p = 0;
+
+  const iv = setInterval(async () => {
+
+    p += Math.random() * 18 + 4;
+
+    if (p >= 100) {
+
+      p = 100;
+      clearInterval(iv);
+
+      try {
+
+        const response = await fetch(
+          "https://campusflow-ai-1.onrender.com/api/notes",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              topic: name
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        document.getElementById("sum-text").innerHTML =
+          data.notes || "No notes generated";
+
+        pw.classList.remove('active');
+
+        showToast(
+          '✅',
+          'Notes generated successfully'
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        pw.classList.remove('active');
+
+        showToast(
+          '❌',
+          'Failed to generate notes'
+        );
+
+      }
+
+    }
+
+    pb.style.width = p + '%';
+    pp.textContent = Math.floor(p) + '%';
+
+  }, 180);
 }
 
 /* ── Toast ── */
