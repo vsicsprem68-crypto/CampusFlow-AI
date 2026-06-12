@@ -289,8 +289,12 @@ async function handleLogin(formData) {
         email: user.email
     }));
 
+    
     showToast('Login Successful!', `Welcome back, ${user.name}!`, 'success');
-    clearFormInputs();
+
+setTimeout(() => {
+    window.location.href = "../main_page/index.html";
+}, 1000);
 }
 
 async function handleSignup(formData) {
