@@ -1296,16 +1296,38 @@
     });
 
     /* ─── SAVE ATTENDANCE ─── */
-    function saveAtt() {
-      const btn = document.querySelector('.save-btn');
-      btn.textContent = '✅ Saved!';
-      btn.style.background = 'linear-gradient(135deg, #16a34a, #22c55e)';
-      setTimeout(() => {
-        btn.textContent = '💾 Save Attendance';
-        btn.style.background = '';
-      }, 2000);
-    }
+    async function saveAtt() {
 
+  try {
+
+    const response = await fetch(
+      `${API_BASE}/api/attendance`,
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          subject:"Cloud Computing",
+          present_classes:19,
+          total_classes:21
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    console.log(data);
+
+    alert("Attendance Saved");
+
+  } catch(err) {
+
+    console.error(err);
+
+  }
+
+}
     /* ─── CALENDAR ─── */
     let calYear = 2026, calMonth = 5; // June = 5
 
