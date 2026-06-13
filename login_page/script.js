@@ -3,16 +3,17 @@ let isLogin = true;
 let showForgotPassword = false;
 let theme = localStorage.getItem('gradstack-theme') || 'light';
 
-const mockUsers = [
-    {
-        id: '1',
-        name: 'Demo Student',
-        email: 'demo@student.com',
-        password: 'demo123'
-    }
-];
+async function handleForgotPassword(email) {
+    showToast(
+        'Feature Coming Soon',
+        'Password reset is not implemented yet.',
+        'success'
+    );
 
-document.addEventListener('DOMContentLoaded', function() {
+    backToLogin();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     initializeTheme();
     initializeEventListeners();
 });
@@ -44,7 +45,7 @@ function initializeEventListeners() {
 
     const inputs = document.querySelectorAll('.form-input');
     inputs.forEach(input => {
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function () {
             clearError(this.id);
         });
     });
@@ -272,7 +273,7 @@ function delay(ms) {
 async function handleLogin(formData) {
 
     const response = await fetch(
-        "https://campusflow-ai-1.onrender.com/api/login",
+        `${API_BASE}/api/login`,
         {
             method: "POST",
             headers: {
@@ -291,6 +292,9 @@ async function handleLogin(formData) {
         throw new Error(data.message);
     }
 
+    // Save user info for use across pages
+    localStorage.setItem("cf_user", JSON.stringify(data.user));
+
     showToast(
         "Login Successful!",
         data.message,
@@ -298,39 +302,39 @@ async function handleLogin(formData) {
     );
 
     setTimeout(() => {
-        window.location.href =
-            "../index.html";
+        window.location.href = "../index.html";
     }, 1000);
 }
-
 async function handleSignup(formData) {
-    await delay(1200);
 
-    const existingUser = mockUsers.find(u => u.email === formData.email);
+    const response = await fetch(
+        `${API_BASE}/api/signup`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password
+            })
+        }
+    );
 
-    if (existingUser) {
-        throw new Error('An account with this email already exists.');
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message);
     }
 
-    const newUser = {
-        id: String(mockUsers.length + 1),
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-    };
+    showToast('Account Created!', 'You can now login with your credentials.', 'success');
 
-    mockUsers.push(newUser);
-
-    sessionStorage.setItem('gradstack_user', JSON.stringify({
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email
-    }));
-
-    showToast('Account Created!', 'Verification email sent. Please check your inbox.', 'success');
-    clearFormInputs();
+    // Switch back to login form
+    setTimeout(() => {
+        toggleAuthMode();
+    }, 1000);
 }
-
 async function handleForgotPassword(email) {
     await delay(1000);
 

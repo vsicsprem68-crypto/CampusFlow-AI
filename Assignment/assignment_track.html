@@ -232,7 +232,7 @@
       }
     }
 
-      .theme-toggle {
+    .theme-toggle {
       width: 38px;
       height: 38px;
       display: flex;
@@ -1555,7 +1555,7 @@
       <li><a href="#">Placement Roadmap</a></li>
       <li><a href="#">About Us</a></li>
     </ul>
-    
+
     <div class="nav-right">
       <div class="header-actions">
         <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
@@ -1578,7 +1578,7 @@
             </svg>
           </span>
         </button>
-        
+
       </div>
       <div class="notif-btn" title="Notifications">
         <i class="fa-regular fa-bell"></i>
@@ -1807,7 +1807,7 @@
   <script>
 
     const API_BASE = "https://campusflow-ai-1.onrender.com";
-      /* ── THEME ─────────────────────────────────────────────────── */
+    /* ── THEME ─────────────────────────────────────────────────── */
     const html = document.documentElement;
     const savedTheme = localStorage.getItem('cf-theme') || 'dark';
     html.setAttribute('data-theme', savedTheme);
@@ -2016,6 +2016,23 @@
       document.querySelector('.modal-actions .btn-primary').innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
       openModal(false);
     }
+    async function loadAssignments() {
+      try {
+        const response = await fetch(
+          `${API_BASE}/api/assignments`
+        );
+
+        const assignments = await response.json();
+
+        console.log(assignments);
+
+        // Display assignments in HTML
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadAssignments();
 
     function addAssignment() {
       const subject = document.getElementById('fSubject').value;

@@ -1842,6 +1842,40 @@
       sidebar.classList.remove('mobile-open');
       overlay.classList.remove('show');
     }
+    const API_BASE = "https://campusflow-ai-1.onrender.com";
+
+    document.getElementById("sendBtn")
+      .addEventListener("click", async () => {
+
+        const message =
+          document.getElementById("msgInput").value;
+
+        const response = await fetch(
+          `${API_BASE}/api/chat`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              message
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        document.getElementById("chatArea")
+          .innerHTML += `
+        <div>
+            <b>You:</b> ${message}
+        </div>
+
+        <div>
+            <b>CampusFlow AI:</b> ${data.response}
+        </div>
+    `;
+      });
 
     /* ── CHAT STATE ────────────────────────────────────────────── */
     const welcome = document.getElementById('welcome');
@@ -2012,52 +2046,52 @@ while(left < right) {
 
     /* ── SEND ──────────────────────────────────────────────────── */
     async function sendMessage() {
-  const text = msgInput.value.trim();
-  if (!text) return;
+      const text = msgInput.value.trim();
+      if (!text) return;
 
-  if (!chatActive) {
-    welcome.style.display = 'none';
-    chatArea.style.display = 'flex';
-    chatActive = true;
-  }
+      if (!chatActive) {
+        welcome.style.display = 'none';
+        chatArea.style.display = 'flex';
+        chatActive = true;
+      }
 
-  appendMessage('user', text);
-  msgInput.value = '';
-  autoResize(msgInput);
-  document.getElementById('sendBtn').disabled = true;
+      appendMessage('user', text);
+      msgInput.value = '';
+      autoResize(msgInput);
+      document.getElementById('sendBtn').disabled = true;
 
-  appendTyping();
+      appendTyping();
 
-  try {
-    const response = await fetch(`${API_BASE}/api/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
-    });
+      try {
+        const response = await fetch(`${API_BASE}/api/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    removeTyping();
+        removeTyping();
 
-    if (!response.ok) {
-      appendMessage('ai', `<p>⚠️ ${data.error || 'Something went wrong'}</p>`);
-    } else {
-      // convert plain text reply into basic HTML paragraphs
-      const formatted = data.reply
-        .split('\n\n')
-        .map(p => `<p>${escHtml(p)}</p>`)
-        .join('');
-      appendMessage('ai', formatted);
+        if (!response.ok) {
+          appendMessage('ai', `<p>⚠️ ${data.error || 'Something went wrong'}</p>`);
+        } else {
+          // convert plain text reply into basic HTML paragraphs
+          const formatted = data.reply
+            .split('\n\n')
+            .map(p => `<p>${escHtml(p)}</p>`)
+            .join('');
+          appendMessage('ai', formatted);
+        }
+
+      } catch (err) {
+        removeTyping();
+        appendMessage('ai', `<p>⚠️ Could not reach AI server. Try again.</p>`);
+      }
+
+      document.getElementById('sendBtn').disabled = false;
+      msgInput.focus();
     }
-
-  } catch (err) {
-    removeTyping();
-    appendMessage('ai', `<p>⚠️ Could not reach AI server. Try again.</p>`);
-  }
-
-  document.getElementById('sendBtn').disabled = false;
-  msgInput.focus();
-}
 
     function sendQuick(text) {
       msgInput.value = text;
@@ -2117,7 +2151,7 @@ while(left < right) {
 
     /* ── INIT ──────────────────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
-     // initDemoChat();
+      // initDemoChat();
       msgInput.focus();
     });
   </script>
