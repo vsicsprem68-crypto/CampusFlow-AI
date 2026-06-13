@@ -2123,7 +2123,7 @@ while(left < right) {
       appendMessage('ai', getAIResponse(name), timeStr(-9), false);
       toast(`Loaded: ${name}`);
     }
-    
+
     function loadHistoryItem(content){
 
     welcome.style.display = "none";
@@ -2133,9 +2133,8 @@ while(left < right) {
 
     appendMessage(
         "ai",
-        `<p>${content}</p>`
+        content
     );
-
 }
 
 
@@ -2189,20 +2188,22 @@ while(left < right) {
 
     container.innerHTML = "";
 
-    data.forEach(item => {
+   data.forEach((item,index) => {
 
-     container.innerHTML += `
-<div class="chat-item"
-     onclick="loadHistoryItem('${item.output_text.replace(/'/g,"\\'")}')">
+   window["history_" + index] = item.output_text;
 
-   <span class="chat-item-text">
-      ${item.input_text}
-   </span>
+   container.innerHTML += `
+      <div class="chat-item"
+           onclick="loadHistoryItem(window.history_${index})">
 
-</div>
-`;
+         <span class="chat-item-text">
+            ${item.input_text}
+         </span>
 
-    });
+      </div>
+   `;
+});
+
 
   } catch(err) {
 
