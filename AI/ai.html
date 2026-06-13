@@ -1493,6 +1493,8 @@
         <div class="sidebar-section">
           <div class="sidebar-label">Recent Chats</div>
 
+          <div id="chatHistory"></div>
+<!--
           <div class="chat-item active">
             <span class="chat-item-icon">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -1543,6 +1545,7 @@
             <span class="chat-item-time">2d</span>
           </div>
         </div>
+      -->
 
         <div class="divider"></div>
 
@@ -1842,7 +1845,6 @@
       sidebar.classList.remove('mobile-open');
       overlay.classList.remove('show');
     }
-    const API_BASE = "https://campusflow-ai-1.onrender.com";
 
     document.getElementById("sendBtn")
       .addEventListener("click", async () => {
@@ -1872,7 +1874,7 @@
         </div>
 
         <div>
-            <b>CampusFlow AI:</b> ${data.response}
+            <b>CampusFlow AI:</b> ${data.reply}
         </div>
     `;
       });
@@ -2154,6 +2156,44 @@ while(left < right) {
       // initDemoChat();
       msgInput.focus();
     });
+
+    async function loadHistory() {
+
+  try {
+
+    const res = await fetch(
+      `${API_BASE}/api/history`
+    );
+
+    const data = await res.json();
+
+    const container =
+      document.getElementById(
+        "chatHistory"
+      );
+
+    container.innerHTML = "";
+
+    data.forEach(item => {
+
+      container.innerHTML += `
+        <div class="chat-item">
+          <span class="chat-item-text">
+            ${item.input_text}
+          </span>
+        </div>
+      `;
+
+    });
+
+  } catch(err) {
+
+    console.log(err);
+
+  }
+
+}
+loadHistory();
   </script>
 </body>
 
