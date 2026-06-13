@@ -1353,6 +1353,24 @@
       }
     }
 
+    async function loadAttendance() {
+  try {
+
+    const response = await fetch(
+      `${API_BASE}/api/attendance`
+    );
+
+    const data = await response.json();
+
+    console.log(data);
+
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+loadAttendance();
+
     function prevMonth() {
       calMonth--;
       if (calMonth < 0) { calMonth = 11; calYear--; }
@@ -1365,6 +1383,8 @@
     }
 
     buildCal();
+
+
   </script>
 </body>
 
